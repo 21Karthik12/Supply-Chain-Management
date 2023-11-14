@@ -6,31 +6,57 @@ import random
 client = socketio.Client()
 alive = True
 passive = True
+_id = -1
+_type = None
+_module = None
+
+NAMESPACE = '/mote'  # Set the namespace, which will be a variable through which the server client connect
+
+@client.on('connect', namespace=NAMESPACE)
+def on_connect():
+    print('Connected to server')
 
 
-@client.on('json_message', namespace='/mote')
+@client.on('disconnect', namespace=NAMESPACE)
+def on_disconnect():
+    print('Disconnected from server')
+
+
+@client.on('stop', namespace=NAMESPACE)
+def on_disconnect():
+    print('STOPPING SERVER')
+
+
+
+@client.on('json_message', namespace=NAMESPACE)
 def handle_json_message(data):
     global alive, passive
+    print(data)
     command = data['command']
+    sent_id = None
+    if 'id' in data:
+        sent_id = data['id']
     print('Received command:', command)
-    if command.lower() == 'start':
-        passive = False
-    elif command.lower() == 'stop':
-        alive = False
-    elif command.lower() == 'pause':
-        passive = True
-    client.emit('json_response', {'response': 'Received your JSON message'})
+    if sent_id == _id:
+        if command.lower() == 'start':
+            passive = False
+        elif command.lower() == 'stop':
+            alive = False
+        elif command.lower() == 'pause':
+            passive = True
+        else:
+            print("Invalid option!")
+        client.emit('json_response', {'response': 'Received your JSON message'}, namespace=NAMESPACE)
 
 
-@client.on('json_response', namespace='/mote')
+@client.on('json_response', namespace=NAMESPACE)
 def on_json_response(data):
     response = data['response']
     print('JSON Response from router:', response)
 
 
 def generate_data():
-    _id = int(sys.argv[1])
-    _type = sys.argv[2]
+    global _id, _type
     _value = None
     _unit = None
     if _type == 'Temperature':
@@ -45,28 +71,25 @@ def generate_data():
     return {
         'sensorID': _id,
         'sensorType': _type,
+        'module': _module,
         'Value': _value,
         'Unit': _unit
     }
 
 
 if __name__ == '__main__':
-    server_url = 'http://127.0.0.1:3001'  # Replace with the actual server URL
+    _id = int(sys.argv[1])
+    _type = sys.argv[2]
+    _module = sys.argv[3]
 
-    @client.event
-    def connect():
-        print('Connected to server')
+    server_url = 'http://127.0.0.1:5001'
 
-    @client.event
-    def disconnect():
-        print('Disconnected from server')
-
-    client.connect(server_url, namespaces=['/mote'])
+    client.connect(server_url, namespaces=[NAMESPACE])
 
     while alive:
         if not passive:
             print('Sending data')
-            client.emit('json_message', generate_data(), namespace='/mote')
+            client.emit('json_message', generate_data(), namespace=NAMESPACE)
         time.sleep(1)
 
     client.disconnect()

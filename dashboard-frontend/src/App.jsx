@@ -9,6 +9,7 @@ import SensorStatus from './components/SensorStatus'
 import SensorControl from './components/SensorControl'
 import ContentPane from './components/ContentPane'
 import Analytics from './components/Analytics'
+import Home from './pages/Home'
 import { HStack, VStack } from '@chakra-ui/react'
 function App() {
   const [count, setCount] = useState(0)
@@ -20,16 +21,17 @@ function App() {
         <Sidebar />
         {/* <ContentPane /> */}
         <HStack flexBasis="50%" flex="1" spacing={4}>
-          <VStack flexBasis="50%" align={"center"} border={'1px solid black'}>
+          <VStack flexBasis="100%" align={"center"} border={'1px solid black'}>
 
-            <DataStream border={'1px solid black'} />
-            <SensorStatus />
+            <Home />
+            {/* <DataStream border={'1px solid black'} />
+            <SensorStatus /> */}
 
           </VStack>
-          <VStack flexBasis="50%" align={"center"} border={'1px solid black'}>
-            <SensorControl />
-            <Analytics />
-          </VStack>
+          {/* <VStack flexBasis="50%" align={"center"} border={'1px solid black'}> */}
+          {/* <SensorControl /> */}
+          {/* <Analytics /> */}
+          {/* </VStack>  */}
         </HStack>
       </HStack>
     </>

@@ -1,5 +1,6 @@
 import socketio
 import json
+import secrets
 
 sio = socketio.Client()
 
@@ -11,24 +12,25 @@ def on_json_response(data):
 
 
 if __name__ == '__main__':
-    server_url = 'http://127.0.0.1:5000'  # Replace with the actual server URL
+    # server_url = 'http://127.0.0.1:5000'  # Replace with the actual server URL
 
-    @sio.event
-    def connect():
-        print('Connected to server')
+    # @sio.event
+    # def connect():
+    #     print('Connected to server')
 
-    @sio.event
-    def disconnect():
-        print('Disconnected from server')
+    # @sio.event
+    # def disconnect():
+    #     print('Disconnected from server')
 
-    sio.connect(server_url)
+    # sio.connect(server_url)
 
-    while True:
-        message = input("Enter a message (or 'exit' to quit): ")
-        if message.lower() == 'exit':
-            break
+    # while True:
+    #     message = input("Enter a message (or 'exit' to quit): ")
+    #     if message.lower() == 'exit':
+    #         break
 
-        data = {'message': message}
-        sio.emit('json_message', data)
+    #     data = {'message': message}
+    #     sio.emit('json_message', data)
 
-    sio.disconnect()
+    # sio.disconnect()
+    print(secrets.token_hex(5).upper())

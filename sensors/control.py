@@ -1,6 +1,7 @@
 import socketio
 import json
 import secrets
+from datetime import datetime
 
 sio = socketio.Client()
 
@@ -33,4 +34,4 @@ if __name__ == '__main__':
     #     sio.emit('json_message', data)
 
     # sio.disconnect()
-    print(secrets.token_hex(5).upper())
+    print(str(datetime.now()))

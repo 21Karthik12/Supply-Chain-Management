@@ -3,6 +3,7 @@ import socketio
 import time
 import sys
 import random
+from datetime import datetime
 
 
 class Sensor:
@@ -50,6 +51,21 @@ class Sensor:
             value = secrets.token_hex(5).upper()
             if value[-1] == '7':
                 self.alert = True
+        elif self.type == 'GPS':
+            self.try_alert()
+            lower = self.value_range[0]
+            upper = self.value_range[1]
+            critical = self.value_range[2]
+            if self.alert:
+                range = critical - upper
+                lat_value = round(upper + random.random() * range, ndigits=1)
+                long_value = round(upper + random.random() * range, ndigits=1)
+                value = str(lat_value) + '|' + str(long_value)
+            else:
+                range = upper - lower
+                lat_value = round(lower + random.random() * range, ndigits=1)
+                long_value = round(lower + random.random() * range, ndigits=1)
+                value = str(lat_value) + '|' + str(long_value)
         else:
             self.try_alert()
             lower = self.value_range[0]
@@ -69,27 +85,25 @@ class Sensor:
             'value': value,
             'unit': self.unit,
             'alert': self.alert,
-            'timestamp': time.time()
+            'timestamp': str(datetime.now())
         }
 
 
 client = socketio.Client()
 sensor = None
-# Set the namespace, which will be a variable through which the server client connect
-namespace = '/mote'
 
 
-@client.on('connect', namespace=namespace)
+@client.on('connect', namespace='/mote')
 def on_connect():
-    print('Connected to server')
+    print('Connected to router')
 
 
-@client.on('disconnect', namespace=namespace)
+@client.on('disconnect', namespace='/mote')
 def on_disconnect():
-    print('Disconnected from server')
+    print('Disconnected from router')
 
 
-@client.on('json_message', namespace=namespace)
+@client.on('json_message', namespace='/mote')
 def handle_json_message(data):
     global sensor
     print(data)
@@ -108,10 +122,10 @@ def handle_json_message(data):
         else:
             print("Invalid option!")
         client.emit('json_response', {
-                    'response': 'Received your JSON message'}, namespace=namespace)
+                    'response': 'Received your JSON message'}, namespace='/mote')
 
 
-@client.on('json_response', namespace=namespace)
+@client.on('json_response', namespace='/mote')
 def on_json_response(data):
     response = data['response']
     print('JSON Response from router:', response)
@@ -122,12 +136,13 @@ if __name__ == '__main__':
     _type = sys.argv[2]
     _module_id = sys.argv[3]
     _module = sys.argv[4]
+    _port = int(sys.argv[5])
 
     sensor = Sensor(_id, _type, _module_id, _module)
 
-    server_url = 'http://127.0.0.1:5001'
+    router_url = 'http://127.0.0.1:' + str(_port)
 
-    client.connect(server_url, namespaces=[namespace, '/alert'])
+    client.connect(router_url, namespaces=['/mote', '/alert'])
 
     while sensor.alive:
         if not sensor.passive:
@@ -140,7 +155,7 @@ if __name__ == '__main__':
                     'alert': True
                 }, namespace='/alert')
             client.emit('json_message', data,
-                        namespace=namespace)
+                        namespace='/mote')
         time.sleep(1)
 
     client.disconnect()

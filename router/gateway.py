@@ -4,13 +4,15 @@ from flask_cors import CORS
 import socketio
 import json
 import subprocess
+import requests
 
 app = Flask(__name__)
 CORS(app)
 server = flask_socketio.SocketIO(app, cors_allowed_origins="*")
-ids = set()  # A dictionary to maintain the id's of the nodes
-sensor_id = 1  # Sensor ID
-NAMESPACE = '/mote'  # Set the namespace
+routers = {}
+sensors = {}
+modules = {}
+sensor_id = 1
 
 
 @app.route('/')
@@ -18,61 +20,122 @@ def index():
     return render_template('index.html')
 
 
-@server.on('connect', namespace=NAMESPACE)
+@server.on('connect', namespace='/router')
 def handle_connect():
-    print('Sensor connected')
+    print('Router connected')
 
 
-@server.on('disconnect', namespace=NAMESPACE)
+@server.on('disconnect', namespace='/router')
 def handle_disconnect():
-    print('Sensor disconnected')
+    print('Router disconnected')
 
 
-@server.on('json_message', namespace=NAMESPACE)
+@server.on('json_message', namespace='/router')
 def handle_json_message(data):
     print('JSON Message:', data)
     server.emit('json_response', {
-                'response': 'Received your JSON message'}, namespace=NAMESPACE)
+                'response': 'Received your JSON message'}, namespace='/router')
     # Perform other operations as needed
 
 
-@server.on('json_response', namespace=NAMESPACE)
+@server.on('json_response', namespace='/router')
 def handle_json_response(data):
     print('JSON Response:', data)
 
 
-@app.route('/create_node', methods=["POST"])
+@app.route('/createSensor', methods=["POST"])
 def handle_create_node():
-    global sensor_id
     try:
+        global sensor_id
         request_data = request.json
         if request_data:
-            node_id = sensor_id
-            node_type = request_data['type']
-            node_module = request_data['module']
-            subprocess.Popen(['python', '.\sensors\sensor.py',
-                             str(node_id), node_type, node_module])
-            ids.add(node_id)
+            request_data['sensorId'] = sensor_id
+            module = request_data['module']
+            response = requests.post(routers[module] + '/createSensor', json=request_data)
+            response_json = response.json()
+            node_id = response_json['sensorId']
+            sensors[module].add(node_id)
             sensor_id += 1
-            return jsonify({'message': f'Received value: {request_data}'}), 200
+            return response_json, response.status_code
+
         else:
             return jsonify({'message': 'Invalid data in the request body'}), 400
     except Exception as e:
         return jsonify({'message': f'Error processing request: {str(e)}'}), 500
 
 
-@app.route('/control_node', methods=["POST"])
-def handle_control_node():
+@app.route('/controlSensor/<sensorId>', methods=["POST"])
+def handle_control_node(sensorId):
     try:
+        global routers, sensors
         request_data = request.json
         if request_data:
-            server.emit('json_message', request_data, namespace=NAMESPACE)
-            return jsonify({'message': f'Received value: {request_data}'}), 200
+            node_id = int(sensorId)
+            module_to_send = None
+            for module in sensors:
+                if node_id in sensors[module]:
+                    module_to_send = module
+                    break
+            
+            if module_to_send is None:
+                return jsonify({"message": "Invalid module"}), 400
+            
+            request_data['sensorId'] = int(sensorId)
+            response = requests.post(routers[module_to_send] + '/controlSensor', json=request_data)
+            
+            if request_data['command'] == 'stop':
+                sensors[module_to_send].remove(node_id)
+            
+            return response.json(), response.status_code
         else:
             return jsonify({'message': 'Invalid data in the request body'}), 400
     except Exception as e:
         return jsonify({'message': f'Error processing request: {str(e)}'}), 500
+
+
+@app.route('/getSensors', methods=['GET'])
+def handle_get_sensors():
+    global routers
+    all_sensors = []
+    for module in routers:
+        try:
+            response = requests.get(routers[module] + '/getSensors')
+            all_sensors += response.json()
+        except Exception:
+            print('Failed to get module:', module)
+    return jsonify(all_sensors), 200
+
+
+@app.route('/getSensors/<moduleId>', methods=['GET'])
+def handle_get_module_sensors(moduleId):
+    global routers, modules
+    response = requests.get(routers[modules[int(moduleId)]] + '/getSensors')
+    return response.json(), response.status_code
+
+
+@app.route('/getSensor/<moduleId>/<sensorId>', methods=['GET'])
+def handle_get_sensor(moduleId, sensorId):
+    global routers, modules
+    response = requests.get(routers[modules[int(moduleId)]] + '/getSensor/' + sensorId)
+    return response.json(), response.status_code
 
 
 if __name__ == '__main__':
-    server.run(app, host='0.0.0.0', port=5001, debug=True)
+    routers = {
+        "Fleet": 'http://127.0.0.1:5001',
+        "Forecasting": 'http://127.0.0.1:5002',
+        "Predictive": 'http://127.0.0.1:5003',
+        "RFID": 'http://127.0.0.1:5004',
+        "Storage": 'http://127.0.0.1:5005'
+    }
+    modules = {
+        1: "Fleet",
+        2: "Forecasting",
+        3: "Predictive",
+        4: "RFID",
+        5: "Storage"
+    }
+    for module in routers:
+        sensors[module] = set()
+    
+    server.run(app, host='0.0.0.0', port=5000, debug=True)

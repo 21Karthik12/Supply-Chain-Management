@@ -1,9 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import flask_socketio
 from flask_cors import CORS
-import socketio
-import json
-import subprocess
 import requests
 
 app = Flask(__name__)

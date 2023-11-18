@@ -20,7 +20,7 @@ class Sensor:
             "GPS": "Lat|Long",
             "Accelerometer": "cm/s^2",
             "Speedometer": "cm/s",
-            "Photosensor": "lumen",
+            "Light": "lumen",
             "IR": "nm"
         }
         self.unit = units[type]
@@ -32,7 +32,7 @@ class Sensor:
             "GPS": (-180.0, 180.0, 360.0),
             "Accelerometer": (1.0, 5.0, 10.0),
             "Speedometer": (20.0, 50.0, 100.0),
-            "Photosensor": (1.0, 5.0, 10.0),
+            "Light": (1.0, 5.0, 10.0),
             "IR": (780.0, 50000.0, 60000.0)
         }
         self.value_range = value_range[type]

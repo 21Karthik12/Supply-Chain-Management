@@ -110,10 +110,20 @@ def handle_get_module_sensors(moduleId):
     return response.json(), response.status_code
 
 
-@app.route('/getSensor/<moduleId>/<sensorId>', methods=['GET'])
-def handle_get_sensor(moduleId, sensorId):
+@app.route('/getSensor/<sensorId>', methods=['GET'])
+def handle_get_sensor(sensorId):
     global routers, modules
-    response = requests.get(routers[modules[int(moduleId)]] + '/getSensor/' + sensorId)
+    module_to_send = None
+    node_id = int(sensorId)
+    for module in sensors:
+        if node_id in sensors[module]:
+            module_to_send = module
+            break
+    
+    if module_to_send is None:
+        return jsonify({"message": "Invalid sensor"}), 400
+        
+    response = requests.get(routers[module_to_send] + '/getSensor/' + sensorId)
     return response.json(), response.status_code
 
 

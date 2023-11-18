@@ -1,0 +1,225 @@
+openapi: 3.0.0
+info:
+  title: Supply Chain Management
+  description: API for managing sensors
+  version: 1.0.0
+
+paths:
+  /createSensor:
+    post:
+      summary: Create a new sensor
+      description: Create a new sensor with the specified type and module.
+      tags:
+        - sensor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSensorRequest'
+            examples:
+              example1:
+                value:
+                  type: "Temperature"
+                  module: "Fleet"
+              example2:
+                value:
+                  type: "Humidity"
+                  module: "Storage"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSensorResponse'
+              example:
+                sensorId: 1
+                sensorType: "Temperature"
+                moduleId: 1
+                module: "Fleet"
+                active: true
+                alert: false
+
+  /controlSensor/{sensorId}:
+    post:
+      summary: Control a sensor
+      description: Control the specified sensor using the given command.
+      tags:
+        - sensor
+      parameters:
+        - in: path
+          name: sensorId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ControlSensorRequest'
+            examples:
+              example1:
+                value:
+                  command: "toggle"
+              example2:
+                value:
+                  command: "resolve"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlSensorResponse'
+              example:
+                message: "Received value: {request body in here}"
+
+  /getSensors:
+    get:
+      summary: Get all sensor details
+      description: Retrieve details for all sensors.
+      tags:
+        - sensor
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorDetails'
+              example:
+                - sensorId: 1
+                  sensorType: "Temperature"
+                  moduleId: 1
+                  module: "Fleet"
+                  active: true
+                  alert: false
+                - sensorId: 2
+                  sensorType: "Humidity"
+                  moduleId: 1
+                  module: "Fleet"
+                  active: false
+                  alert: true
+
+  /getSensors/{moduleId}:
+    get:
+      summary: Get sensors from a module
+      description: Retrieve details for sensors belonging to the specified module.
+      tags:
+        - sensor
+      parameters:
+        - in: path
+          name: moduleId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorDetails'
+              example:
+                - sensorId: 1
+                  sensorType: "Temperature"
+                  moduleId: 1
+                  module: "Fleet"
+                  active: true
+                  alert: false
+                - sensorId: 2
+                  sensorType: "Humidity"
+                  moduleId: 1
+                  module: "Fleet"
+                  active: false
+                  alert: true
+
+  /getSensor/{sensorId}:
+    get:
+      summary: Get sensor information
+      description: Retrieve details for the specified sensor.
+      tags:
+        - sensor
+      parameters:
+        - in: path
+          name: sensorId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorDetails'
+              example:
+                sensorId: 1
+                sensorType: "Temperature"
+                moduleId: 1
+                module: "Fleet"
+                active: true
+                alert: false
+
+components:
+  schemas:
+    CreateSensorRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: ["Temperature", "Humidity", "Pressure", "RFID", "GPS", "Accelerometer", "Speedometer", "Light", "IR"]
+        module:
+          type: string
+          enum: ["Fleet", "Forecasting", "Predictive", "RFID", "Storage"]
+
+    CreateSensorResponse:
+      type: object
+      properties:
+        sensorId:
+          type: integer
+        sensorType:
+          type: string
+        moduleId:
+          type: integer
+        module:
+          type: string
+        active:
+          type: boolean
+        alert:
+          type: boolean
+
+    ControlSensorRequest:
+      type: object
+      properties:
+        command:
+          type: string
+          enum: ["toggle", "stop", "resolve"]
+
+    ControlSensorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+    SensorDetails:
+      type: object
+      properties:
+        sensorId:
+          type: integer
+        sensorType:
+          type: string
+        moduleId:
+          type: integer
+        module:
+          type: string
+        active:
+          type: boolean
+        alert:
+          type: boolean

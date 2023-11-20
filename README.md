@@ -17,4 +17,4 @@ To run the backend:
     -   `python routers/router.py 5 Storage 5005`
 -   The moduleId, module and port are hardcoded as of now and correspond to each other. So, do not change the above commands while running them.
     -   (You can run any number of them though)
--   Make API calls to the gateway from the YAML file to make CRUD operations on sensors.
+-   Make API calls (specified in the YAML file) to the gateway to make CRUD operations on sensors.

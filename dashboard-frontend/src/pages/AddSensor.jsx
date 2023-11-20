@@ -1,11 +1,32 @@
 import { Box, Button, FormControl, FormLabel, Select, Input, Text } from '@chakra-ui/react';
 import { Alert, AlertIcon, AlertTitle, CloseButton } from '@chakra-ui/react';
 import React, { useState } from 'react';
+import axios from 'axios'
 
 const YourComponent = () => {
     const [module, setModule] = useState("")
     const [sensorType, setSensorType] = useState("")
     const [isSubmitted, setSubmitted] = useState(false)
+    const url = "http://192.168.118.24:5000"
+
+    const modules = [
+        "Fleet",
+         "Forecasting",
+         "Predictive",
+         "RFID",
+         "Storage"
+    ]
+    const sensors = [
+        "Temperature",
+        "Humidity",
+        "Pressure",
+        "RFID",
+        "GPS",
+        "Accelerometer",
+        "Speedometer",
+        "Light",
+        "IR"
+    ]
 
     const handleModuleChange = (e) => {
         setModule(e.target.value)
@@ -20,6 +41,21 @@ const YourComponent = () => {
         console.log(module)
         console.log(sensorType)
         setSubmitted(true)
+
+        // POST request
+        const data = {
+            type: sensorType,
+            module: module
+        }
+        
+        axios.post(url + '/createSensor', data)
+        .then((response) => {
+            console.log(response)
+        })
+
+
+
+
         // Your form submission logic here
     };
 
@@ -43,26 +79,27 @@ const YourComponent = () => {
                                 value={module}
                                 onChange={handleModuleChange}
                                 placeholder='Choose a Module'>
-                                <option value='option1'>Option 1</option>
-                                <option value='option2'>Option 2</option>
-                                <option value='option3'>Option 3</option>
-                                <option value='option4'>Option 4</option>
-                                <option value='option5'>Option 5</option>
+                                    {modules.map((module) => {
+                                        return(
+                                            <option value={module}>{module}</option>
+                                        )
+                                    })}
+                            
                             </Select>
                         </FormControl>
 
                         <FormControl mb="4">
                             <FormLabel htmlFor="module">Select Sensor Type</FormLabel>
                             <Select
-                                placeholder='Choose a Module'
+                                placeholder='Choose a Sensor Type'
                                 value={sensorType}
                                 onChange={handleSensorChange}
                             >
-                                <option value='sensor1'>Sensor 1</option>
-                                <option value='sensor2'>Sensor 2</option>
-                                <option value='sensor3'>Sensor 3</option>
-                                <option value='sensor4'>Sensor 4</option>
-                                <option value='sensor5'>Sensor 5</option>
+                                {sensors.map((sensor) => {
+                                    return(
+                                        <option value={sensor}>{sensor}</option>
+                                    )
+                                })}
                             </Select>
                         </FormControl>
 
@@ -76,7 +113,7 @@ const YourComponent = () => {
                             <Alert status="success" mb="4" mt="8">
                                 <AlertIcon />
                                 <AlertTitle mr={2}>Sensor Created Successfully!</AlertTitle>
-                                <CloseButton onClick={() => setIsSubmitted(false)} position="absolute" right="8px" top="8px" />
+                                <CloseButton onClick={() => setSubmitted(false)} position="absolute" right="8px" top="8px" />
                             </Alert>
                         )}
                     </Box>

@@ -21,15 +21,19 @@ import {
     FiSettings,
     FiMenu,
 } from 'react-icons/fi'
+import { Link } from 'react-router-dom';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 
 
 const LinkItems = [
-    { name: 'Home', icon: FiHome },
-    { name: 'Trending', icon: FiTrendingUp },
-    { name: 'Explore', icon: FiCompass },
-    { name: 'Favourites', icon: FiStar },
-    { name: 'Settings', icon: FiSettings },
+    { name: 'Home', icon: FiHome, url: "" },
+    { name: 'Fleet', icon: FiTrendingUp, url: "Fleet" },
+    { name: 'Predictive', icon: FiCompass, url: "predictive" },
+    { name: 'Storage', icon: FiStar, url: "storage" },
+    { name: 'RFID', icon: FiSettings, url: "rfid" },
+    { name: 'Forecasting', icon: FiSettings, url: "forecasting" },
+    { name: 'Create Sensor', icon: FiSettings, url: "addSensor" },
+
 ]
 
 export default function Sidebar() {
@@ -82,7 +86,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
                 <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
             </Flex>
             {LinkItems.map((link) => (
-                <NavItem key={link.name} icon={link.icon}>
+                <NavItem as={Link} to={`/${link.url}`} key={link.name} icon={link.icon}>
                     {link.name}
                 </NavItem>
             ))}

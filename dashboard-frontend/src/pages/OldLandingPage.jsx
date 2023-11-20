@@ -17,7 +17,7 @@ const OldLandingPage = () => {
           <VStack flexBasis="50%" align={"center"} border={'1px solid black'}>
 
             <DataStream border={'1px solid black'} />
-            <SensorStatus/>
+            <SensorStatus />
 
           </VStack>
           <VStack flexBasis="50%" align={"center"} border={'1px solid black'}>
@@ -29,5 +29,5 @@ const OldLandingPage = () => {
     </>
   )
 };
-  
+
 export default OldLandingPage;

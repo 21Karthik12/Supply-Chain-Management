@@ -13,26 +13,6 @@ const sensorData = {
 const FetchSensorDetails = () => {
   const { sensorId, moduleId } = useParams();
   // const [sensorData, setSensorData] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchSensorData = async () => {
-  //     try {
-  //       // Fetch data for the specific sensor using sensorId and moduleId
-  //       const response = await fetch(`/api/sensors/${sensorId}/modules/${moduleId}`);
-  //       const data = await response.json();
-  //       setSensorData(data);
-  //     } catch (error) {
-  //       console.error('Error fetching sensor data:', error);
-  //     }
-  //   };
-
-  //   fetchSensorData();
-  // }, [sensorId, moduleId]);
-
-  // if (!sensorData) {
-  //   return <div>Loading...</div>;
-  // }
-
   return (
     <Center>
       <Box p={4}>

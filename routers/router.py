@@ -38,6 +38,7 @@ CORS(app)
 server = flask_socketio.SocketIO(app, cors_allowed_origins="*")
 client = socketio.Client()
 router = None
+module_details = None
 
 
 @app.route('/')
@@ -139,7 +140,17 @@ def on_disconnect():
 
 
 if __name__ == '__main__':
-    router = Router(int(sys.argv[1]), sys.argv[2], sys.argv[3])
+    module_details = {
+        "Fleet": (1, "5001"),
+        "Forecasting": (2, "5002"),
+        "Predictive": (3, "5003"),
+        "RFID": (4, "5004"),
+        "Storage": (5, "5005")
+    }
+    
+    module = sys.argv[1]
+    id, port = module_details[module]
+    router = Router(id, module, port)
     
     gateway_url = 'http://127.0.0.1:5000'
     client.connect(gateway_url, namespaces=['/router'])

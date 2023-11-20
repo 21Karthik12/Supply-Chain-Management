@@ -1,13 +1,6 @@
 import { useState } from 'react'
 import { Card, CardHeader, CardBody, Text, Heading, CardFooter } from '@chakra-ui/react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import Nav from './components/Navbar'
-import Sidebar from './components/Sidebar'
 import DataStream from './components/DataStream'
-import SensorStatus from './components/SensorStatus'
-import SensorControl from './components/SensorControl'
-import ContentPane from './components/ContentPane'
 import Analytics from './components/Analytics'
 import { HStack, VStack } from '@chakra-ui/react'
 import { Route, useParams } from 'react-router-dom';

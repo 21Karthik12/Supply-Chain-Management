@@ -5,6 +5,7 @@ import { HStack } from '@chakra-ui/react';
 import LandingPage from './pages/LandingPage'
 import FetchSensorDetails from './pages/FetchSensorDetails';
 import Sidebar from './components/Sidebar';
+import AddSensor from './pages/AddSensor';
 import OldLandingPage from './pages/OldLandingPage';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Routes>
             <Route exact path='/' element={<LandingPage />}></Route>
             <Route path="/:sensorId/:moduleId" element={<FetchSensorDetails />} />
+            <Route path="/addSensor" element={<AddSensor />} />
           </Routes>
         </main>
       </HStack>

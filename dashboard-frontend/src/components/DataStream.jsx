@@ -110,7 +110,7 @@ const DataStream = () => {
 
     return (
         <>
-            <Card width={"100%"}>
+            <Card width={"100%"} zIndex={-1}>
                 <CardHeader>
                     <Heading size='md'>Realtime Sensor Data</Heading>
                 </CardHeader>

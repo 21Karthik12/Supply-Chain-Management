@@ -9,9 +9,12 @@ import {
     Td,
     TableCaption,
     TableContainer,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 import { Box, Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
-import { ChevronDownIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, Title, Tooltip, LineElement, Legend, CategoryScale, LinearScale, PointElement, Filler } from 'chart.js';
+import ChartStreaming from 'chartjs-plugin-streaming';
 
 import { useEffect, useState } from 'react'
 import io from 'socket.io-client'
@@ -147,9 +150,73 @@ import io from 'socket.io-client'
 //     }
 // };
 
-const Analytics = () => {
+ChartJS.register(
+    Title,
+    Tooltip,
+    LineElement,
+    Legend,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    Filler,
+    ChartStreaming
+  );
 
-    const [mdata, setData] = useState([])
+const socket = io('http://192.168.108.89:3001');
+
+const Analytics = (props) => {
+
+    const [data, setData] = useState({
+        labels: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
+        datasets: [
+          {
+            label: 'Temperature',
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            backgroundColor: 'lightblue',
+            borderColor: 'blue',
+            tension: 0.1,
+            fill: true,
+          },
+        ],
+      });
+    
+      socket.on('connect', () => {
+        console.log('Connected to the server');
+      });
+    
+      
+      
+      useEffect(() => {
+        socket.on('json', (incomingData) => {
+          console.log('Received message:', incomingData);
+          let newDataPoint = incomingData.Value;
+          console.log(newDataPoint)
+          let newLabels = [...data.labels.slice(1), new Date().toLocaleTimeString()];
+          let newDatasets = data.datasets.map((dataset) => ({
+               ...dataset,
+               data: [...dataset.data.slice(1), newDataPoint],
+             }));
+          console.log(newLabels)   
+          console.log(newDatasets)
+          
+            //    setData({
+            //   labels: newLabels,
+            //    datasets: newDatasets,
+            //  }); 
+            setData(prevState => {
+              return {
+                labels: [...prevState.labels.slice(1), new Date().toLocaleTimeString()],
+                datasets: prevState.datasets.map(dataset => ({
+                  ...dataset,
+                  data: [...dataset.data.slice(1), newDataPoint],
+                })),
+              };
+            });
+             console.log(data)   
+             
+        });
+      }, []);
+    
 
     useEffect(() => {
         const socket = io('http://localhost:3000')
@@ -182,7 +249,7 @@ const Analytics = () => {
                 <CardHeader>
                     <Heading size='md'>Analytics</Heading>
                 </CardHeader>
-                <CardBody>
+                <CardBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     {/* <TableContainer>
                         <Table textAlign="center" variant="simple">
 
@@ -205,6 +272,9 @@ const Analytics = () => {
                             </Thead>
                         </Table>
                     </TableContainer> */}
+                    <div className="App" style={{ width: '400px', height:''}}>
+                        <Line data={data} options={{ animation: true }} />
+                    </div>
 
                 </CardBody>
             </Card>

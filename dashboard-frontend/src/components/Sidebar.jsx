@@ -35,7 +35,7 @@ const LinkItems = [
 export default function Sidebar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
-        <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
+        <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')} border={"1px solid black"} width={"fit-content"}>
             <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
             <Drawer
                 isOpen={isOpen}

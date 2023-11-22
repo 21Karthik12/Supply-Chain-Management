@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { VStack, Heading, Spinner, HStack, Grid, GridItem } from '@chakra-ui/react';
+import { VStack, Heading, Spinner, HStack, Grid, GridItem, Box } from '@chakra-ui/react';
 import SensorCard from '../components/SensorCard';
+<<<<<<< HEAD
 import {useParams} from 'react-router-dom'
 
 const routeDict = {
@@ -9,6 +10,17 @@ const routeDict = {
   "storage" : ["Storage", 5],
   "rfid" : ["RFID Module", 4],
   "forecasting" : ["Forecasting", 2]
+=======
+import Sidebar from '../components/Sidebar';
+import { useParams } from 'react-router-dom'
+
+const routeDict = {
+  'fleet': ["Fleet Maintenance", 1],
+  "predictive": ["Predictive Maintenance", 3],
+  "storage": ["Storage", 5],
+  "rfid": ["RFID Module", 4],
+  "forecasting": ["Forecasting", 2]
+>>>>>>> 347bfe42620114e65a74286a2b6a59082b40975a
 }
 
 const modules = {
@@ -23,7 +35,7 @@ const LandingPage = () => {
   //const [sensorData, setSensorData] = useState([]);
   const [loading, setLoading] = useState(false); //change to true
   const [data, setSensorData] = useState([]);
-  const {page} = useParams()
+  const { page } = useParams()
   let title = page ? routeDict[page][0] : ""
   let module_id = title ? routeDict[page][1] : 0
 
@@ -46,15 +58,15 @@ const LandingPage = () => {
         }
       };
 
-      fetchSensorData();
-    }, [module_id, title]); 
+    fetchSensorData();
+  }, [module_id, title]);
 
   return (
     <HStack>
-      <VStack border={"1px solid black"} spacing={4} align="stretch" p={4} minW={"96%"} minH={"100vh"}>
+      <VStack spacing={4} maxW={"max-content"} w={"80vw"} justifyContent={"center"} alignItems={"center"} align="stretch" p={4}>
         <Heading as="h1" size="xl" mb={4}>
           {title ? title : "All Sensors"}
-  
+
         </Heading>
 
         {loading ? (

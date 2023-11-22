@@ -8,8 +8,6 @@ import Sidebar from './components/Sidebar';
 import AddSensor from './pages/AddSensor';
 import OldLandingPage from './pages/OldLandingPage';
 import SensorInfoPage from './SensorInfoPage'
-
-
 function App() {
   const [count, setCount] = useState(0);
 

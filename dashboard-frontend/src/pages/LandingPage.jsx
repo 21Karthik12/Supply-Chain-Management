@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { VStack, Heading, Spinner, HStack, Grid, GridItem } from '@chakra-ui/react';
 import SensorCard from '../components/SensorCard';
-import Sidebar from '../components/Sidebar';
 import {useParams} from 'react-router-dom'
 
 const routeDict = {
-  'Fleet' : ["Fleet Maintenance", 1],
+  "fleet" : ["Fleet Maintenance", 1],
   "predictive" : ["Predictive Maintenance", 3],
   "storage" : ["Storage", 5],
   "rfid" : ["RFID Module", 4],
@@ -36,7 +35,8 @@ const LandingPage = () => {
           if (module_id != 0)
             url += '/' + module_id
           const response = await fetch(url);
-          const data = await response.json();
+          let data = await response.json();
+          data = data.sort((a, b) => a.sensorId - b.sensorId)
           setSensorData(data);
           setLoading(false);
           console.log(data);
@@ -51,27 +51,29 @@ const LandingPage = () => {
 
   return (
     <HStack>
-      <VStack border={"1px solid black"} spacing={4} align="stretch" p={4}>
+      <VStack border={"1px solid black"} spacing={4} align="stretch" p={4} minW={"96%"} minH={"100vh"}>
         <Heading as="h1" size="xl" mb={4}>
           {title ? title : "All Sensors"}
   
         </Heading>
 
-        {data.length === 0 ? (
+        {loading ? (
           <Spinner size="xl" />
         ) : (
           <Grid
-            templateColumns="repeat(6, 1fr)"
-            gap={4}
+            templateColumns="repeat(4, 1fr)"
+            gap={6}
             width="100%"
           >
             {data.map((sensor) => (
               <GridItem key={sensor.sensorId}>
                 <SensorCard
                   sensorId={sensor.sensorId}
-                  moduleType={sensor.module}
+                  sensorType={sensor.sensorType}
+                  moduleName={sensor.module}
                   moduleId={sensor.moduleId}
                   isAlert={sensor.alert}
+                  isActive={sensor.active}
                 />
               </GridItem>
             ))}

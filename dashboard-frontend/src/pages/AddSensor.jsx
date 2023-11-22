@@ -1,5 +1,13 @@
 import { Box, Button, FormControl, FormLabel, Select, Input, Text } from '@chakra-ui/react';
-import { Alert, AlertIcon, AlertTitle, CloseButton } from '@chakra-ui/react';
+import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    CloseButton,
+    VStack,
+    Heading,
+    HStack
+ } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import axios from 'axios'
 
@@ -7,7 +15,8 @@ const YourComponent = () => {
     const [module, setModule] = useState("")
     const [sensorType, setSensorType] = useState("")
     const [isSubmitted, setSubmitted] = useState(false)
-    const url = "http://192.168.118.24:5000"
+    const [isErrored, setErrored] = useState(false)
+    const url = "http://127.0.0.1:5000"
 
     const modules = [
         "Fleet",
@@ -40,7 +49,6 @@ const YourComponent = () => {
         e.preventDefault();
         console.log(module)
         console.log(sensorType)
-        setSubmitted(true)
 
         // POST request
         const data = {
@@ -51,18 +59,23 @@ const YourComponent = () => {
         axios.post(url + '/createSensor', data)
         .then((response) => {
             console.log(response)
+            setSubmitted(true)
         })
-
-
-
-
+        .catch((error) => {
+            console.err(error)
+            setErrored(true)
+        })
         // Your form submission logic here
     };
 
     return (
-        <>
-            <Box margin={"0 auto"} width={"100%"} maxW={"100%"} border={"1px solid white"} justifyContent={"center"} alignItems={"center"}>
-                <Text fontSize={"2rem"}>Add a Sensor</Text>
+        <HStack>
+        <VStack border={"1px solid black"} spacing={4} align="stretch" p={4} minW={"96%"} minH={"100vh"}>
+            <Heading as="h1" size="xl" mb={4}>
+                Add a Sensor
+            </Heading>
+
+            <Box mx="auto" width="100%" maxW="400px" justifyContent="center" alignItems="center">
                 <Box
                     mt="8"
                     p="6"
@@ -105,7 +118,7 @@ const YourComponent = () => {
 
 
                         <Button type="submit" colorScheme="teal" size="md" w="100%">
-                            Create a Sensor
+                            Create Sensor
                         </Button>
                     </form>
                     <Box>
@@ -116,11 +129,18 @@ const YourComponent = () => {
                                 <CloseButton onClick={() => setSubmitted(false)} position="absolute" right="8px" top="8px" />
                             </Alert>
                         )}
+                        {isErrored && (
+                            <Alert status="warning" mb="4" mt="8">
+                                <AlertIcon />
+                                <AlertTitle mr={2}>Failed to Create Sensor</AlertTitle>
+                                <CloseButton onClick={() => setErrored(false)} position="absolute" right="8px" top="8px" />
+                            </Alert>
+                        )}
                     </Box>
                 </Box>
             </Box>
-        </>
-
+        </VStack>
+        </HStack>
     );
 };
 

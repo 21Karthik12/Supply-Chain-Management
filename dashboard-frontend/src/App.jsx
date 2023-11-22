@@ -17,12 +17,12 @@ function App() {
     <BrowserRouter>
       <HStack>
         <Sidebar />
-        <main style={{ minHeight: "93vh" }}>
+        <main style={{ minHeight: "93vh", width:"100%" }}>
           <Routes>
             <Route exact path='/' element={<LandingPage />}></Route>
             <Route exact path='/:page' element={<LandingPage />}></Route>
             <Route path="/info/:id" element={<SensorInfoPage type="Temperature" module="Predictive Maintenance" status="Running"/>} />
-            <Route path="/:sensorId/:moduleId" element={<FetchSensorDetails />} />
+            <Route path="/sensor/:sensorId" element={<FetchSensorDetails />} />
             <Route path="/addSensor" element={<AddSensor />} />
           </Routes>
         </main>

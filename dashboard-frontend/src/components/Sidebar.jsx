@@ -27,7 +27,7 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 
 const LinkItems = [
     { name: 'Home', icon: FiHome, url: "" },
-    { name: 'Fleet', icon: FiTrendingUp, url: "Fleet" },
+    { name: 'Fleet', icon: FiTrendingUp, url: "fleet" },
     { name: 'Predictive', icon: FiCompass, url: "predictive" },
     { name: 'Storage', icon: FiStar, url: "storage" },
     { name: 'RFID', icon: FiSettings, url: "rfid" },
@@ -39,7 +39,7 @@ const LinkItems = [
 export default function Sidebar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
-        <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')} border={"1px solid black"} width={"fit-content"}>
+        <>
             <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
             <Drawer
                 isOpen={isOpen}
@@ -57,7 +57,7 @@ export default function Sidebar() {
             <Box ml={{ base: 0, md: 60 }} p="4">
                 {/* Content */}
             </Box>
-        </Box>
+        </>
     )
 }
 
@@ -76,12 +76,12 @@ const SidebarContent = ({ onClose, ...rest }) => {
             pos="fixed"
             h="full"
             {...rest}>
-            <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+            <Flex h="20" alignItems="center" mx="6" justifyContent="space-between">
                 <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
                     ChainSense
                 </Text>
-                <Text fontSize="xl" fontWeight="300">
-                    {" "} Hub
+                <Text fontSize="2xl" fontWeight="300">
+                    Hub
                 </Text>
                 <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
             </Flex>

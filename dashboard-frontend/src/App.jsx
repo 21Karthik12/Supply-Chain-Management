@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HStack } from '@chakra-ui/react';
 import LandingPage from './pages/LandingPage'
@@ -11,7 +11,7 @@ import SensorInfoPage from './SensorInfoPage'
 
 function App() {
   const [count, setCount] = useState(0);
-
+  
   return (
     <BrowserRouter>
       <HStack>

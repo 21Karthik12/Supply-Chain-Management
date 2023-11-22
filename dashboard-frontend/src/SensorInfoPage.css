@@ -50,15 +50,15 @@
     flex: 1 0 5%;  
     flex-direction: row;
     justify-content: center;
-    min-width: 100px; 
+    min-width: 90px; 
   }
   .button{
     display: inline-block;
     background: blue;
-    margin: 0 5px;
+    margin: 0 10px 0 0;
     padding: 8px 8px;
     border-radius: 4px;
-    width: 22%;
+    width: 25%;
     color: #FFF;
     text-decoration: none;
   }

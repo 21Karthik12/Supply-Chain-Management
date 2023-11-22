@@ -27,7 +27,7 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 
 const LinkItems = [
     { name: 'Home', icon: FiHome, url: "" },
-    { name: 'Fleet', icon: FiTrendingUp, url: "Fleet" },
+    { name: 'Fleet', icon: FiTrendingUp, url: "fleet" },
     { name: 'Predictive', icon: FiCompass, url: "predictive" },
     { name: 'Storage', icon: FiStar, url: "storage" },
     { name: 'RFID', icon: FiSettings, url: "rfid" },

@@ -7,14 +7,15 @@ const YourComponent = () => {
     const [module, setModule] = useState("")
     const [sensorType, setSensorType] = useState("")
     const [isSubmitted, setSubmitted] = useState(false)
-    const url = "http://192.168.118.24:5000"
+    const base_url = import.meta.env.VITE_BASE_URL
+    const url = `${base_url}:5000`
 
     const modules = [
         "Fleet",
-         "Forecasting",
-         "Predictive",
-         "RFID",
-         "Storage"
+        "Forecasting",
+        "Predictive",
+        "RFID",
+        "Storage"
     ]
     const sensors = [
         "Temperature",
@@ -47,11 +48,11 @@ const YourComponent = () => {
             type: sensorType,
             module: module
         }
-        
+
         axios.post(url + '/createSensor', data)
-        .then((response) => {
-            console.log(response)
-        })
+            .then((response) => {
+                console.log(response)
+            })
 
 
 
@@ -79,12 +80,12 @@ const YourComponent = () => {
                                 value={module}
                                 onChange={handleModuleChange}
                                 placeholder='Choose a Module'>
-                                    {modules.map((module) => {
-                                        return(
-                                            <option value={module}>{module}</option>
-                                        )
-                                    })}
-                            
+                                {modules.map((module) => {
+                                    return (
+                                        <option value={module}>{module}</option>
+                                    )
+                                })}
+
                             </Select>
                         </FormControl>
 
@@ -96,7 +97,7 @@ const YourComponent = () => {
                                 onChange={handleSensorChange}
                             >
                                 {sensors.map((sensor) => {
-                                    return(
+                                    return (
                                         <option value={sensor}>{sensor}</option>
                                     )
                                 })}

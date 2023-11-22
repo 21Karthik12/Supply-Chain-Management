@@ -8,8 +8,6 @@ import Sidebar from './components/Sidebar';
 import AddSensor from './pages/AddSensor';
 import OldLandingPage from './pages/OldLandingPage';
 import SensorInfoPage from './SensorInfoPage'
-
-
 function App() {
   const [count, setCount] = useState(0);
 
@@ -21,7 +19,7 @@ function App() {
           <Routes>
             <Route exact path='/' element={<LandingPage />}></Route>
             <Route exact path='/:page' element={<LandingPage />}></Route>
-            <Route path="/info/:id" element={<SensorInfoPage type="Temperature" module="Predictive Maintenance" status="Running"/>} />
+            <Route path="/info/:id" element={<SensorInfoPage type="Temperature" module="Predictive Maintenance" status="Running" />} />
             <Route path="/:sensorId/:moduleId" element={<FetchSensorDetails />} />
             <Route path="/addSensor" element={<AddSensor />} />
           </Routes>

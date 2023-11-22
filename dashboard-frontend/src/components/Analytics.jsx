@@ -1,14 +1,14 @@
 import { Card, CardHeader, CardBody, Text, Heading, CardFooter } from '@chakra-ui/react'
 import {
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
-    TableContainer,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
 } from '@chakra-ui/react';
 import { Box, Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
 import { ChevronDownIcon } from '@chakra-ui/icons';
@@ -151,106 +151,106 @@ import io from 'socket.io-client'
 // };
 
 ChartJS.register(
-    Title,
-    Tooltip,
-    LineElement,
-    Legend,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    Filler,
-    ChartStreaming
-  );
+  Title,
+  Tooltip,
+  LineElement,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Filler,
+  ChartStreaming
+);
 
 const socket = io('http://192.168.108.89:3001');
 
 const Analytics = (props) => {
 
-    const [data, setData] = useState({
-        labels: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-        datasets: [
-          {
-            label: 'Temperature',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            backgroundColor: 'lightblue',
-            borderColor: 'blue',
-            tension: 0.1,
-            fill: true,
-          },
-        ],
+  const [data, setData] = useState({
+    labels: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
+    datasets: [
+      {
+        label: 'Temperature',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        backgroundColor: 'lightblue',
+        borderColor: 'blue',
+        tension: 0.1,
+        fill: true,
+      },
+    ],
+  });
+
+  socket.on('connect', () => {
+    console.log('Connected to the server');
+  });
+
+
+
+  useEffect(() => {
+    socket.on('json', (incomingData) => {
+      console.log('Received message:', incomingData);
+      let newDataPoint = incomingData.Value;
+      console.log(newDataPoint)
+      let newLabels = [...data.labels.slice(1), new Date().toLocaleTimeString()];
+      let newDatasets = data.datasets.map((dataset) => ({
+        ...dataset,
+        data: [...dataset.data.slice(1), newDataPoint],
+      }));
+      console.log(newLabels)
+      console.log(newDatasets)
+
+      //    setData({
+      //   labels: newLabels,
+      //    datasets: newDatasets,
+      //  }); 
+      setData(prevState => {
+        return {
+          labels: [...prevState.labels.slice(1), new Date().toLocaleTimeString()],
+          datasets: prevState.datasets.map(dataset => ({
+            ...dataset,
+            data: [...dataset.data.slice(1), newDataPoint],
+          })),
+        };
       });
-    
-      socket.on('connect', () => {
-        console.log('Connected to the server');
-      });
-    
-      
-      
-      useEffect(() => {
-        socket.on('json', (incomingData) => {
-          console.log('Received message:', incomingData);
-          let newDataPoint = incomingData.Value;
-          console.log(newDataPoint)
-          let newLabels = [...data.labels.slice(1), new Date().toLocaleTimeString()];
-          let newDatasets = data.datasets.map((dataset) => ({
-               ...dataset,
-               data: [...dataset.data.slice(1), newDataPoint],
-             }));
-          console.log(newLabels)   
-          console.log(newDatasets)
-          
-            //    setData({
-            //   labels: newLabels,
-            //    datasets: newDatasets,
-            //  }); 
-            setData(prevState => {
-              return {
-                labels: [...prevState.labels.slice(1), new Date().toLocaleTimeString()],
-                datasets: prevState.datasets.map(dataset => ({
-                  ...dataset,
-                  data: [...dataset.data.slice(1), newDataPoint],
-                })),
-              };
-            });
-             console.log(data)   
-             
-        });
-      }, []);
-    
+      console.log(data)
 
-    useEffect(() => {
-        const socket = io('http://localhost:3000')
-        socket.on('mqtt-message', (data) => {
-            console.log(data.topic, data.message)
-            const currentTime = new Date();
-            const year = currentTime.getFullYear();
-            const month = currentTime.getMonth() + 1; // Months are zero-based
-            const day = currentTime.getDate();
-            const hours = currentTime.getHours();
-            const minutes = currentTime.getMinutes();
-            const seconds = currentTime.getSeconds();
-
-            const formattedTimeString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-            let temp = {
-                timestamp: formattedTimeString,
-                topic: data.topic,
-                message: data.message
-            }
-            setData((prevData) => [...prevData, temp])
-            setData((prevData) => prevData.slice(-10))
-        })
-    }, []); // Empty dependency array ensures the effect runs only once on mount
+    });
+  }, []);
 
 
-    return (
-        <>
-            <Card width={"100%"}>
-                <CardHeader>
-                    <Heading size='md'>Analytics</Heading>
-                </CardHeader>
-                <CardBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    {/* <TableContainer>
+  useEffect(() => {
+    const socket = io(`${import.meta.env.VITE_BASE_URL}:3000`)
+    socket.on('mqtt-message', (data) => {
+      console.log(data.topic, data.message)
+      const currentTime = new Date();
+      const year = currentTime.getFullYear();
+      const month = currentTime.getMonth() + 1; // Months are zero-based
+      const day = currentTime.getDate();
+      const hours = currentTime.getHours();
+      const minutes = currentTime.getMinutes();
+      const seconds = currentTime.getSeconds();
+
+      const formattedTimeString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+      let temp = {
+        timestamp: formattedTimeString,
+        topic: data.topic,
+        message: data.message
+      }
+      setData((prevData) => [...prevData, temp])
+      setData((prevData) => prevData.slice(-10))
+    })
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
+
+  return (
+    <>
+      <Card width={"100%"}>
+        <CardHeader>
+          <Heading size='md'>Analytics</Heading>
+        </CardHeader>
+        <CardBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {/* <TableContainer>
                         <Table textAlign="center" variant="simple">
 
                             <Thead>
@@ -272,14 +272,14 @@ const Analytics = (props) => {
                             </Thead>
                         </Table>
                     </TableContainer> */}
-                    <div className="App" style={{ width: '400px', height:''}}>
-                        <Line data={data} options={{ animation: true }} />
-                    </div>
+          <div className="App" style={{ width: '400px', height: '' }}>
+            <Line data={data} options={{ animation: true }} />
+          </div>
 
-                </CardBody>
-            </Card>
-        </>
-    )
+        </CardBody>
+      </Card>
+    </>
+  )
 }
 
 export default Analytics

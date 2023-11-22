@@ -7,6 +7,7 @@ import { Route, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import axios from 'axios'
 import './SensorInfoPage.css'
+import { useNavigate } from 'react-router-dom'
 
 function SensorInfoPage() {
   const [count, setCount] = useState(0);
@@ -17,7 +18,7 @@ function SensorInfoPage() {
   useEffect(() => {
     fetchSensorData();
   }, []); 
-
+  let navigate = useNavigate(); 
   useEffect(() => {
     axios.get(`http://192.168.118.24:5000/getSensors`)
       .then(response => {
@@ -65,6 +66,7 @@ function SensorInfoPage() {
     try {
       await axios.post(`http://192.168.118.24:5000/controlSensor/${sensorId}`, { command: 'stop' });
       fetchSensorData();
+      navigate('/');
     } catch (error) {
       console.error(`Error stopping sensor ${sensorId}:`, error);
     }

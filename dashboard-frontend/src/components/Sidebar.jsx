@@ -21,21 +21,25 @@ import {
     FiSettings,
     FiMenu,
 } from 'react-icons/fi'
+import { Link } from 'react-router-dom';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 
 
 const LinkItems = [
-    { name: 'Home', icon: FiHome },
-    { name: 'Trending', icon: FiTrendingUp },
-    { name: 'Explore', icon: FiCompass },
-    { name: 'Favourites', icon: FiStar },
-    { name: 'Settings', icon: FiSettings },
+    { name: 'Home', icon: FiHome, url: "" },
+    { name: 'Fleet', icon: FiTrendingUp, url: "fleet" },
+    { name: 'Predictive', icon: FiCompass, url: "predictive" },
+    { name: 'Storage', icon: FiStar, url: "storage" },
+    { name: 'RFID', icon: FiSettings, url: "rfid" },
+    { name: 'Forecasting', icon: FiSettings, url: "forecasting" },
+    { name: 'Create Sensor', icon: FiSettings, url: "addSensor" },
+
 ]
 
 export default function Sidebar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
-        <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')} border={"1px solid black"} width={"fit-content"}>
+        <>
             <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
             <Drawer
                 isOpen={isOpen}
@@ -53,7 +57,7 @@ export default function Sidebar() {
             <Box ml={{ base: 0, md: 60 }} p="4">
                 {/* Content */}
             </Box>
-        </Box>
+        </>
     )
 }
 
@@ -72,17 +76,17 @@ const SidebarContent = ({ onClose, ...rest }) => {
             pos="fixed"
             h="full"
             {...rest}>
-            <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+            <Flex h="20" alignItems="center" mx="6" justifyContent="space-between">
                 <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
                     ChainSense
                 </Text>
-                <Text fontSize="xl" fontWeight="300">
-                    {" "} Hub
+                <Text fontSize="2xl" fontWeight="300">
+                    Hub
                 </Text>
                 <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
             </Flex>
             {LinkItems.map((link) => (
-                <NavItem key={link.name} icon={link.icon}>
+                <NavItem as={Link} to={`/${link.url}`} key={link.name} icon={link.icon}>
                     {link.name}
                 </NavItem>
             ))}

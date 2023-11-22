@@ -8,18 +8,42 @@ import { useEffect } from 'react'
 import axios from 'axios'
 import './SensorInfoPage.css'
 
-function SensorInfoPage(props) {
-  const [count, setCount] = useState(0)
-  const { id } = useParams();
+function SensorInfoPage() {
+  const [count, setCount] = useState(0);
+  const [matchingSensor, setMatchingSensor] = useState(null);
+  const id = useParams().sensorId;
   /////
   const [sensorData, setSensorData] = useState([]);
   useEffect(() => {
     fetchSensorData();
   }, []); 
 
+  useEffect(() => {
+    axios.get(`http://192.168.118.24:5000/getSensors`)
+      .then(response => {
+        const matchingSensor = response.data.find(item => item.sensorId === Number(id));
+        if (matchingSensor) {
+          setMatchingSensor(matchingSensor);
+        } else {
+          setMatchingSensor(null);
+        }
+        setSensorData(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }, [id]); 
+  
+  let modul = '';
+  let type = '';
+  
+  if (matchingSensor) {
+    ({ module: modul, sensorType: type } = matchingSensor);
+  }
+
   const fetchSensorData = async () => {
     try {
-      const response = await axios.get('http://192.168.118.24:5000/getSensors');
+      const response = await axios.get(`http://192.168.118.24:5000/getSensors`);
       setSensorData(response.data);
     } catch (error) {
       console.error('Error fetching sensor data:', error);
@@ -64,13 +88,13 @@ function SensorInfoPage(props) {
                 <div className="box-content">
                     <div className="grid">
                         <div className="item bold">SENSOR TYPE:</div>
-                        <div className="item">{props.type}</div>
+                        <div className="item">{type}</div>
                         <div className="item bold">SENSOR ID:</div>
                         <div className="item">{id}</div>
                         <div className="item bold">MODULE:</div>
-                        <div className="item">{props.module}</div>
+                        <div className="item">{modul}</div>
                         <div className="item bold">STATUS:</div>
-                        <div className="item">{props.status}</div>
+                        <div className="item">Running</div>
                     </div>
 
                     <div className="buttons" style={{'marginTop':'3rem'}}>
@@ -81,7 +105,7 @@ function SensorInfoPage(props) {
                 </div>
             </div>  
             <div className="box">
-                <Analytics id={id} type={props.type}/>    
+                <Analytics id={id} type={type}/>    
             </div>  
         </div>
     </div>

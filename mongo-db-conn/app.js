@@ -11,13 +11,6 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(
     const dbName = mongoose.connection.name;
     console.log(dbName)
 })
-/*
-'sensorID': _id,
-        'sensorType': _type,
-        'Value': _value,
-        'Unit': _unit
-
- */
 
 // Define a Mongoose schema
 const dataSchema = new mongoose.Schema({

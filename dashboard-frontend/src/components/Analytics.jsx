@@ -1,14 +1,14 @@
 import { Card, CardHeader, CardBody, Text, Heading, CardFooter } from '@chakra-ui/react'
 import {
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
-    TableContainer,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
 } from '@chakra-ui/react';
 import { Box, Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
 import { ChevronDownIcon } from '@chakra-ui/icons';
@@ -20,21 +20,22 @@ import { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 
 ChartJS.register(
-    Title,
-    Tooltip,
-    LineElement,
-    Legend,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    Filler,
-    ChartStreaming
-  );
+  Title,
+  Tooltip,
+  LineElement,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Filler,
+  ChartStreaming
+);
 
-const socket = io('http://192.168.108.89:3001');
+const socket = io('http://192.168.118.24:5000');
 
 const Analytics = (props) => {
     let type = props.type
+    console.log(type)
     const [data, setData] = useState({
         labels: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
         datasets: [
@@ -43,10 +44,16 @@ const Analytics = (props) => {
             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             backgroundColor: 'lightblue',
             borderColor: 'blue',
-            tension: 0.1,
+            pointBackgroundColor: 'darkblue', 
+            tension: 0,
             fill: true,
           },
         ],
+        options: {
+          responsive: true, 
+          maintainAspectRatio: false, 
+          animation: true,
+        },
       });
     
       socket.on('connect', () => {
@@ -55,47 +62,35 @@ const Analytics = (props) => {
        
       useEffect(() => {
         socket.on('json', (incomingData) => {
-          const newDataPoint = incomingData.value;
-          const newSensorId = incomingData.sensorId;
-          const newTimestamp = incomingData.timestamp;
-      
-          if (newSensorId === props.id) {
-            setData((prevData) => {
-              return {
-                labels: [...prevData.labels.slice(1), newTimestamp],
-                datasets: prevData.datasets.map((dataset) => ({
-                  ...dataset,
-                  data: [...dataset.data.slice(1), newDataPoint],
-                })),
-              };
-            });
+          if(incomingData){
+            type = props.type
+            let newDataPoint = incomingData.value;
+            let newSensorId = incomingData.sensorId;
+            let newTimestamp = incomingData.timestamp;
+            
+            const parsedTimestamp = new Date(newTimestamp);
+            const formattedTime = `${parsedTimestamp.toLocaleTimeString('en-US', {
+              hour12: false,
+              hour: 'numeric',
+              minute: 'numeric',
+              second: 'numeric',
+            })}:${('00' + parsedTimestamp.getMilliseconds()).slice(-3).slice(0, 2)}`;
+
+            if (newSensorId == props.id) {
+              console.log(newDataPoint, formattedTime)
+              setData((prevData) => {
+                return {
+                  labels: [...prevData.labels.slice(1), formattedTime],
+                  datasets: prevData.datasets.map((dataset) => ({
+                    ...dataset,
+                    data: [...dataset.data.slice(1), newDataPoint],
+                  })),
+                };
+              });
+            }
           }
         });
       }, [props.id]);
-
-    useEffect(() => {
-        const socket = io('http://localhost:3000')
-        socket.on('mqtt-message', (data) => {
-            console.log(data.topic, data.message)
-            const currentTime = new Date();
-            const year = currentTime.getFullYear();
-            const month = currentTime.getMonth() + 1; // Months are zero-based
-            const day = currentTime.getDate();
-            const hours = currentTime.getHours();
-            const minutes = currentTime.getMinutes();
-            const seconds = currentTime.getSeconds();
-
-            const formattedTimeString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-            let temp = {
-                timestamp: formattedTimeString,
-                topic: data.topic,
-                message: data.message
-            }
-            setData((prevData) => [...prevData, temp])
-            setData((prevData) => prevData.slice(-10))
-        })
-    }, []); 
 
     return (
         <>

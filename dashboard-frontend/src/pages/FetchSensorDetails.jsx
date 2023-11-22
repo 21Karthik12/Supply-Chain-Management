@@ -11,13 +11,13 @@ const sensorData = {
 }
 
 const FetchSensorDetails = () => {
-  const { sensorId, moduleId } = useParams();
+  const { sensorId } = useParams();
   // const [sensorData, setSensorData] = useState(null);
   return (
     <Center>
       <Box p={4}>
         <Heading as="h1" mb={4}>
-          Sensor Details - Sensor ID: {sensorId}, Module ID: {moduleId}
+          Sensor Details - Sensor ID: {sensorId}
         </Heading>
 
         <SensorDetailsBox sensorData={sensorData} />

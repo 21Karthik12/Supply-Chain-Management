@@ -20,7 +20,7 @@ function SensorInfoPage() {
   }, []);
   let navigate = useNavigate();
   useEffect(() => {
-    axios.get(`http://192.168.142.24:5000/getSensors`)
+    axios.get(`${import.meta.env.VITE_BASE_URL}:5000/getSensors`)
       .then(response => {
         const matchingSensor = response.data.find(item => item.sensorId === Number(id));
         if (matchingSensor) {
@@ -44,7 +44,7 @@ function SensorInfoPage() {
 
   const fetchSensorData = async () => {
     try {
-      const response = await axios.get(`http://192.168.142.24:5000/getSensors`);
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}:5000/getSensors`);
       setSensorData(response.data);
     } catch (error) {
       console.error('Error fetching sensor data:', error);
@@ -55,7 +55,7 @@ function SensorInfoPage() {
     try {
       const payload = { command: 'resolve' };
       console.log('Resolve Payload:', payload);
-      await axios.post(`http://192.168.142.24:5000/controlSensor/${sensorId}`, { command: 'resolve' });
+      await axios.post(`${import.meta.env.VITE_BASE_URL}:5000/controlSensor/${sensorId}`, { command: 'resolve' });
       fetchSensorData();
     } catch (error) {
       console.error(`Error resolving sensor ${sensorId}:`, error);
@@ -64,7 +64,7 @@ function SensorInfoPage() {
 
   const handleStop = async (sensorId) => {
     try {
-      await axios.post(`http://192.168.142.24:5000/controlSensor/${sensorId}`, { command: 'stop' });
+      await axios.post(`${import.meta.env.VITE_BASE_URL}:5000/controlSensor/${sensorId}`, { command: 'stop' });
       fetchSensorData();
       navigate('/');
     } catch (error) {
@@ -74,7 +74,7 @@ function SensorInfoPage() {
 
   const handleToggle = async (sensorId) => {
     try {
-      await axios.post(`http://192.168.142.24:5000/controlSensor/${sensorId}`, { command: 'toggle' });
+      await axios.post(`${import.meta.env.VITE_BASE_URL}:5000/controlSensor/${sensorId}`, { command: 'toggle' });
       fetchSensorData();
     } catch (error) {
       console.error(`Error toggling sensor ${sensorId}:`, error);

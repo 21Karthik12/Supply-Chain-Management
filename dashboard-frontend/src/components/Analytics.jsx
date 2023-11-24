@@ -31,7 +31,7 @@ ChartJS.register(
   ChartStreaming
 );
 
-const socket = io('http://192.168.142.24:5000');
+const socket = io(`${import.meta.env.VITE_BASE_URL}:5000`);
 
 const Analytics = (props) => {
   let type = props.type

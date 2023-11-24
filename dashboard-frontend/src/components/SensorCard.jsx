@@ -28,7 +28,7 @@ const Card = ({ sensorId, sensorType, moduleName, moduleId, isAlert, isActive })
       command: 'toggle'
     }
 
-    axios.post('http://192.168.142.24:5000/controlSensor/' + sensorId, data)
+    axios.post(`${import.meta.env.VITE_BASE_URL}:5000/controlSensor/` + sensorId, data)
       .then((response) => {
         console.log(response)
       })

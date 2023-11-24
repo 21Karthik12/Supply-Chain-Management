@@ -9,7 +9,7 @@ import numpy as np
 from datetime import datetime, timedelta
 from keras.models import Sequential
 from keras.layers import Dense, LSTM
-import pprint
+from sklearn.linear_model import LinearRegression
 
 
 class Router:
@@ -56,10 +56,7 @@ predictive_model.add(LSTM(10, input_shape=(1, 1)))
 predictive_model.add(Dense(1))
 predictive_model.compile(optimizer='adam', loss='mean_squared_error')
 
-forecasting_model = Sequential()
-# Hidden layer with 10 neurons and ReLU activation
-forecasting_model.add(Dense(10, input_dim=1, activation='relu'))
-forecasting_model.add(Dense(1, activation='linear'))
+forecasting_model = LinearRegression()
 
 
 @app.route('/')
@@ -177,28 +174,28 @@ def handle_forecasting(sensorId):
     print('Fetched data:', data_points)
     data_points.reverse()
     y = data_points
-    X = list(range(1, len(y) + 1))
-    forecasting_model.fit(X, y, epochs=100, batch_size=5)
-    X_test = list(range(len(y) + 1, len(y) + 11))
+    X = np.array((range(1, len(y) + 1))).reshape(-1, 1)
+    forecasting_model.fit(X, y)
+    X_test = np.array(list(range(len(y) + 1, len(y) + 11))).reshape(-1, 1)
     y_pred = forecasting_model.predict(X_test)
     curr_time = datetime.now()
     for y in y_pred:
         response.append({
-            'value': float(y[0]),
+            'value': float(y),
             'timestamp': str(curr_time)
         })
         curr_time += timedelta(seconds=1)
     return jsonify(response), 200
 
 
-# @client.on('connect', namespace='/router')
-# def on_connect():
-#     print('Connected to gateway')
+@client.on('connect', namespace='/router')
+def on_connect():
+    print('Connected to gateway')
 
 
-# @client.on('disconnect', namespace='/router')
-# def on_disconnect():
-#     print('Disconnected from gateway')
+@client.on('disconnect', namespace='/router')
+def on_disconnect():
+    print('Disconnected from gateway')
 
 
 def train_predictive_model():
@@ -234,12 +231,10 @@ if __name__ == '__main__':
     if module == 'Predictive':
         train_predictive_model()
 
-    forecasting_model.compile(optimizer='adam', loss='mean_squared_error')
-
     db = mongo_client['test']
     collection = db['sensordata']
 
-    # gateway_url = 'http://127.0.0.1:5000'
-    # client.connect(gateway_url, namespaces=['/router'])
+    gateway_url = 'http://127.0.0.1:5000'
+    client.connect(gateway_url, namespaces=['/router'])
 
     server.run(app, port=router.port, debug=True)

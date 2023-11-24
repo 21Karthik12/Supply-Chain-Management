@@ -148,7 +148,7 @@ def handle_get_analytics():
 @app.route('/forecasting/<sensorId>', methods=['GET'])
 def handle_get_forecasting(sensorId):
     response = requests.get(
-        routers['Forecasting'] + '/forecasting' + str(sensorId))
+        routers['Forecasting'] + '/forecasting/' + sensorId)
     return response.json(), response.status_code
 
 

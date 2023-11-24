@@ -17,12 +17,7 @@ const YourComponent = () => {
     const [isSubmitted, setSubmitted] = useState(false)
     const [isErrored, setErrored] = useState(false)
     const base_url = import.meta.env.VITE_BASE_URL
-<<<<<<< HEAD
     const url = `${base_url}:5000`
-=======
-    const url = `${base_url}:5000` 
-
->>>>>>> 7d268d1c8d0ca0b562d6fc115728b84578f8e9da
 
     const modules = [
         "Fleet",

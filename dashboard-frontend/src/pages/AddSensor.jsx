@@ -59,7 +59,6 @@ const YourComponent = () => {
         }
 
         axios.post(url + '/createSensor', data)
-<<<<<<< HEAD
         .then((response) => {
             console.log(response)
             setSubmitted(true)
@@ -68,16 +67,6 @@ const YourComponent = () => {
             console.error(error)
             setErrored(true)
         })
-=======
-            .then((response) => {
-                console.log(response)
-                setSubmitted(true)
-            })
-            .catch((error) => {
-                console.err(error)
-                setErrored(true)
-            })
->>>>>>> d4c2c89218cb1589aa73903c975a802544a37371
         // Your form submission logic here
     };
 

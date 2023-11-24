@@ -16,7 +16,7 @@ const YourComponent = () => {
     const [sensorType, setSensorType] = useState("")
     const [isSubmitted, setSubmitted] = useState(false)
     const [isErrored, setErrored] = useState(false)
-    const base_url = 'http://192.168.118.24'
+    const base_url = 'http://192.168.142.24'
     const url = `${base_url}:5000`
 
     const modules = [

@@ -68,7 +68,7 @@ def handle_rfid():
     param2 = request.args.get('device_token')
     print(param1)
     print(param2)
-    return jsonify({'message': "works"})
+    return jsonify({'message': "works"}), 200
 
 
 @app.route('/controlSensor/<sensorId>', methods=["POST"])
@@ -135,6 +135,12 @@ def handle_get_sensor(sensorId):
         return jsonify({"message": "Invalid sensor"}), 400
 
     response = requests.get(routers[module_to_send] + '/getSensor/' + sensorId)
+    return response.json(), response.status_code
+
+
+@app.route('/analytics', methods=['GET'])
+def handle_get_analytics():
+    response = requests.get(routers['Predictive'] + '/analytics')
     return response.json(), response.status_code
 
 

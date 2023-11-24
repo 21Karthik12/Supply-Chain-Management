@@ -32,7 +32,7 @@ const LandingPage = () => {
     // Assuming you have a function to fetch sensor data
     const fetchSensorData = async () => {
       try {
-        let url = `http://192.168.118.24:5000/getSensors`
+        let url = `http://192.168.142.24:5000/getSensors`
         if (module_id != 0)
           url += '/' + module_id
         const response = await fetch(url);

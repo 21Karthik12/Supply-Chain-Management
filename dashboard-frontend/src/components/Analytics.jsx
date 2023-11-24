@@ -31,93 +31,66 @@ ChartJS.register(
   ChartStreaming
 );
 
-const socket = io('http://192.168.118.24:5000');
+const socket = io('http://192.168.142.24:5000');
 
 const Analytics = (props) => {
-    let type = props.type
-    console.log(type)
-    const [data, setData] = useState({
-        labels: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-        datasets: [
-          {
-            label: type,
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            backgroundColor: 'lightblue',
-            borderColor: 'blue',
-            pointBackgroundColor: 'darkblue', 
-            tension: 0,
-            fill: true,
-          },
-        ],
-        options: {
-          responsive: true, 
-          maintainAspectRatio: false, 
-          animation: true,
-        },
-      });
-    
-      socket.on('connect', () => {
-        console.log('Connected to the server');
-      });
-       
-      useEffect(() => {
-        socket.on('json', (incomingData) => {
-          if(incomingData){
-            type = props.type
-            let newDataPoint = incomingData.value;
-            let newSensorId = incomingData.sensorId;
-            let newTimestamp = incomingData.timestamp;
-            
-            const parsedTimestamp = new Date(newTimestamp);
-            const formattedTime = `${parsedTimestamp.toLocaleTimeString('en-US', {
-              hour12: false,
-              hour: 'numeric',
-              minute: 'numeric',
-              second: 'numeric',
-            })}:${('00' + parsedTimestamp.getMilliseconds()).slice(-3).slice(0, 2)}`;
+  let type = props.type
+  console.log(type)
+  const [data, setData] = useState({
+    labels: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
+    datasets: [
+      {
+        label: type,
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        backgroundColor: 'lightblue',
+        borderColor: 'blue',
+        pointBackgroundColor: 'darkblue',
+        tension: 0,
+        fill: true,
+      },
+    ],
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: true,
+    },
+  });
 
-            if (newSensorId == props.id) {
-              console.log(newDataPoint, formattedTime)
-              setData((prevData) => {
-                return {
-                  labels: [...prevData.labels.slice(1), formattedTime],
-                  datasets: prevData.datasets.map((dataset) => ({
-                    ...dataset,
-                    data: [...dataset.data.slice(1), newDataPoint],
-                  })),
-                };
-              });
-            }
-          }
-        });
-      }, [props.id]);
-
-<<<<<<< HEAD
+  socket.on('connect', () => {
+    console.log('Connected to the server');
+  });
 
   useEffect(() => {
-    const socket = io(`http://192.168.118.24:3000`)
-    socket.on('mqtt-message', (data) => {
-      console.log(data.topic, data.message)
-      const currentTime = new Date();
-      const year = currentTime.getFullYear();
-      const month = currentTime.getMonth() + 1; // Months are zero-based
-      const day = currentTime.getDate();
-      const hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes();
-      const seconds = currentTime.getSeconds();
+    socket.on('json', (incomingData) => {
+      if (incomingData) {
+        type = props.type
+        let newDataPoint = incomingData.value;
+        let newSensorId = incomingData.sensorId;
+        let newTimestamp = incomingData.timestamp;
 
-      const formattedTimeString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        const parsedTimestamp = new Date(newTimestamp);
+        const formattedTime = `${parsedTimestamp.toLocaleTimeString('en-US', {
+          hour12: false,
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+        })}:${('00' + parsedTimestamp.getMilliseconds()).slice(-3).slice(0, 2)}`;
 
-      let temp = {
-        timestamp: formattedTimeString,
-        topic: data.topic,
-        message: data.message
+        if (newSensorId == props.id) {
+          console.log(newDataPoint, formattedTime)
+          setData((prevData) => {
+            return {
+              labels: [...prevData.labels.slice(1), formattedTime],
+              datasets: prevData.datasets.map((dataset) => ({
+                ...dataset,
+                data: [...dataset.data.slice(1), newDataPoint],
+              })),
+            };
+          });
+        }
       }
-      setData((prevData) => [...prevData, temp])
-      setData((prevData) => prevData.slice(-10))
-    })
-  }, []); // Empty dependency array ensures the effect runs only once on mount
-
+    });
+  }, [props.id]);
 
   return (
     <>
@@ -126,52 +99,13 @@ const Analytics = (props) => {
           <Heading size='md'>Analytics</Heading>
         </CardHeader>
         <CardBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          {/* <TableContainer>
-                        <Table textAlign="center" variant="simple">
-
-                            <Thead>
-                                <Tr>
-                                    <Th>Sensor Type</Th>
-                                    <Th>Sensor ID</Th>
-                                    <Th>Status</Th>
-                                    <Th>Action</Th>
-                                </Tr>
-                                {data.map((sensor) => {
-                                    return (< Tr >
-                                        <Td>{sensor.type}</Td>
-                                        <Td>{sensor.id}</Td>
-                                        <Td>{sensor.status}</Td>
-                                        <Td>{<ControlButtons />}</Td>
-                                    </Tr>)
-                                })}
-
-                            </Thead>
-                        </Table>
-                    </TableContainer> */}
           <div className="App" style={{ width: '400px', height: '' }}>
             <Line data={data} options={{ animation: true }} />
           </div>
-
         </CardBody>
       </Card>
     </>
   )
-=======
-    return (
-        <>
-            <Card width={"100%"}>
-                <CardHeader>
-                    <Heading size='md'>Analytics</Heading>
-                </CardHeader>
-                <CardBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <div className="App" style={{ width: '400px', height:''}}>
-                        <Line data={data} options={{ animation: true }} />
-                    </div>
-                </CardBody>
-            </Card>
-        </>
-    )
->>>>>>> 7a58eb5b8c07dec36079d188a18b9cede14d892d
 }
 
 export default Analytics

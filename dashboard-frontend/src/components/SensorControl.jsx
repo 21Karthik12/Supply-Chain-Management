@@ -67,7 +67,7 @@ const SensorControl = () => {
     const [mdata, setData] = useState([])
 
     useEffect(() => {
-        const socket = io(`http://192.168.118.24:3000`)
+        const socket = io(`http://192.168.142.24:3000`)
         socket.on('mqtt-message', (data) => {
             console.log(data.topic, data.message)
             const currentTime = new Date();

@@ -35,7 +35,6 @@ const socket = io(`${import.meta.env.VITE_BASE_URL}:5000`);
 
 const Analytics = (props) => {
     let type = props.type
-    console.log(type)
     const [data, setData] = useState({
         labels: ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
         datasets: [
@@ -63,7 +62,6 @@ const Analytics = (props) => {
       useEffect(() => {
         socket.on('json', (incomingData) => {
           if(incomingData){
-            type = props.type
             let newDataPoint = incomingData.value;
             let newSensorId = incomingData.sensorId;
             let newTimestamp = incomingData.timestamp;
@@ -84,6 +82,7 @@ const Analytics = (props) => {
                   datasets: prevData.datasets.map((dataset) => ({
                     ...dataset,
                     data: [...dataset.data.slice(1), newDataPoint],
+                    label: type,
                   })),
                 };
               });

@@ -2,7 +2,9 @@ import React, { useEffect, useState, useReducer } from 'react';
 import { VStack, Heading, Spinner, HStack, Grid, GridItem, Box, Table } from '@chakra-ui/react';
 import SensorCard from '../components/SensorCard';
 import SensorTablePredictive from '../components/SensorTablePredictive';
+
 import RfidTable from '../components/RfidTable';
+import ForecastTable from '../components/ForecastTable';
 import {useParams} from 'react-router-dom'
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import io from 'socket.io-client'
@@ -56,10 +58,12 @@ const LandingPage = () => {
         url += '/' + module_id
       const response = await fetch(url);
         let data = await response.json();
+        data = data.filter(value => value != null)
         data = data.sort((a, b) => a.sensorId - b.sensorId)
         setSensorData(data);
         setLoading(false);
         console.log(data);
+        
       } catch (error) {
         setSensorData([]);
         console.error('Error fetching sensor data:', error);
@@ -87,7 +91,7 @@ const LandingPage = () => {
       }
     };
     fetchPredictiveAnalytics();
-  }, []);
+  }, [shouldFetchAnalytics]);
 
   //fetch rfid data
   const socket = io(`${import.meta.env.VITE_BASE_URL}:5000`);
@@ -149,12 +153,15 @@ const LandingPage = () => {
                   moduleId={sensor.moduleId}
                   isAlert={sensor.alert}
                   isActive={sensor.active}
+                  alertTime={predictiveAnalytics ? predictiveAnalytics : []}
                 />
               </GridItem>
             ))}
           </Grid>
         )}
-
+        {
+          module_id==2 && <h1></h1>
+        }
         {
           module_id==3 && <SensorTablePredictive data={predictiveAnalytics}/>
         }

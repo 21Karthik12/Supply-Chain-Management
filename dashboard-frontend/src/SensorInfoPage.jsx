@@ -8,6 +8,7 @@ import { useEffect } from 'react'
 import axios from 'axios'
 import './SensorInfoPage.css'
 import { useNavigate } from 'react-router-dom'
+import ForecastTable from './components/ForecastTable';
 
 function SensorInfoPage() {
   const [count, setCount] = useState(0);
@@ -100,7 +101,7 @@ function SensorInfoPage() {
                     </div>
 
                     <div className="buttons" style={{'marginTop':'3rem'}}>
-                        <button className="button" onClick={() => handleStop(id)}>Stop</button>
+                        <button className="button" onClick={() => handleStop(id)}>Disconnect</button>
                         <button className="button" onClick={() => handleToggle(id)}>Toggle</button>
                         <button className="button" onClick={() => handleResolve(id)}>Resolve</button>
                     </div>
@@ -109,6 +110,9 @@ function SensorInfoPage() {
             <div className="box">
                 <Analytics id={id} type={type}/>    
             </div>  
+            {
+                modul == 'Forecasting' && <ForecastTable data={type}/>
+            }
         </div>
     </div>
   )

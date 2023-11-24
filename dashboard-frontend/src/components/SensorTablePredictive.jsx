@@ -14,7 +14,7 @@ const SensorTable = ({ data }) => {
         {data.map((item, index) => (
           <Tr key={index}>
             <Td textAlign="center">{item.sensorId}</Td>
-            <Td textAlign="center">{item.alertTime*10}</Td>
+            <Td textAlign="center">{item.nextAlert*5}</Td>
           </Tr>
         ))}
       </Tbody>

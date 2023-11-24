@@ -49,7 +49,8 @@ def handle_create_node():
         if request_data:
             request_data['sensorId'] = sensor_id
             module = request_data['module']
-            response = requests.post(routers[module] + '/createSensor', json=request_data)
+            response = requests.post(
+                routers[module] + '/createSensor', json=request_data)
             response_json = response.json()
             node_id = response_json['sensorId']
             sensors[module].add(node_id)
@@ -60,6 +61,15 @@ def handle_create_node():
             return jsonify({'message': 'Invalid data in the request body'}), 400
     except Exception as e:
         return jsonify({'message': f'Error processing request: {str(e)}'}), 500
+
+
+@app.route('/rfid', methods=['GET'])
+def handle_rfid():
+    param1 = request.args.get('card_uid')
+    param2 = request.args.get('device_token')
+    print(param1)
+    print(param2)
+    return jsonify({'message': "works"})
 
 
 @app.route('/controlSensor/<sensorId>', methods=["POST"])
@@ -74,16 +84,17 @@ def handle_control_node(sensorId):
                 if node_id in sensors[module]:
                     module_to_send = module
                     break
-            
+
             if module_to_send is None:
                 return jsonify({"message": "Invalid module"}), 400
-            
+
             request_data['sensorId'] = int(sensorId)
-            response = requests.post(routers[module_to_send] + '/controlSensor', json=request_data)
-            
+            response = requests.post(
+                routers[module_to_send] + '/controlSensor', json=request_data)
+
             if request_data['command'] == 'stop':
                 sensors[module_to_send].remove(node_id)
-            
+
             return response.json(), response.status_code
         else:
             return jsonify({'message': 'Invalid data in the request body'}), 400
@@ -120,10 +131,10 @@ def handle_get_sensor(sensorId):
         if node_id in sensors[module]:
             module_to_send = module
             break
-    
+
     if module_to_send is None:
         return jsonify({"message": "Invalid sensor"}), 400
-        
+
     response = requests.get(routers[module_to_send] + '/getSensor/' + sensorId)
     return response.json(), response.status_code
 
@@ -145,5 +156,5 @@ if __name__ == '__main__':
     }
     for module in routers:
         sensors[module] = set()
-    
+
     server.run(app, host='0.0.0.0', port=5000, debug=True)

@@ -7,7 +7,7 @@ import {
     VStack,
     Heading,
     HStack
- } from '@chakra-ui/react';
+} from '@chakra-ui/react';
 import React, { useState } from 'react';
 import axios from 'axios'
 
@@ -59,6 +59,7 @@ const YourComponent = () => {
         }
 
         axios.post(url + '/createSensor', data)
+<<<<<<< HEAD
         .then((response) => {
             console.log(response)
             setSubmitted(true)
@@ -67,81 +68,91 @@ const YourComponent = () => {
             console.error(error)
             setErrored(true)
         })
+=======
+            .then((response) => {
+                console.log(response)
+                setSubmitted(true)
+            })
+            .catch((error) => {
+                console.err(error)
+                setErrored(true)
+            })
+>>>>>>> d4c2c89218cb1589aa73903c975a802544a37371
         // Your form submission logic here
     };
 
     return (
         <HStack>
-        <VStack border={"1px solid black"} spacing={4} align="stretch" p={4} minW={"96%"} minH={"100vh"}>
-            <Heading as="h1" size="xl" mb={4}>
-                Add a Sensor
-            </Heading>
+            <VStack border={"1px solid black"} spacing={4} align="stretch" p={4} minW={"96%"} minH={"100vh"}>
+                <Heading as="h1" size="xl" mb={4}>
+                    Add a Sensor
+                </Heading>
 
-            <Box mx="auto" width="100%" maxW="400px" justifyContent="center" alignItems="center">
-                <Box
-                    mt="8"
-                    p="6"
-                    border="1px"
-                    borderRadius="md"
-                    borderColor="gray.200"
-                    textAlign="center"
-                    mx="auto"
-                >
-                    <form onSubmit={handleSubmit}>
-                        <FormControl mb="4">
-                            <FormLabel htmlFor="module">Select Module</FormLabel>
-                            <Select
-                                value={module}
-                                onChange={handleModuleChange}
-                                placeholder='Choose a Module'>
-                                {modules.map((module) => {
-                                    return (
-                                        <option value={module}>{module}</option>
-                                    )
-                                })}
+                <Box mx="auto" width="100%" maxW="400px" justifyContent="center" alignItems="center">
+                    <Box
+                        mt="8"
+                        p="6"
+                        border="1px"
+                        borderRadius="md"
+                        borderColor="gray.200"
+                        textAlign="center"
+                        mx="auto"
+                    >
+                        <form onSubmit={handleSubmit}>
+                            <FormControl mb="4">
+                                <FormLabel htmlFor="module">Select Module</FormLabel>
+                                <Select
+                                    value={module}
+                                    onChange={handleModuleChange}
+                                    placeholder='Choose a Module'>
+                                    {modules.map((module) => {
+                                        return (
+                                            <option value={module}>{module}</option>
+                                        )
+                                    })}
 
-                            </Select>
-                        </FormControl>
+                                </Select>
+                            </FormControl>
 
-                        <FormControl mb="4">
-                            <FormLabel htmlFor="module">Select Sensor Type</FormLabel>
-                            <Select
-                                placeholder='Choose a Sensor Type'
-                                value={sensorType}
-                                onChange={handleSensorChange}
-                            >
-                                {sensors.map((sensor) => {
-                                    return (
-                                        <option value={sensor}>{sensor}</option>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
+                            <FormControl mb="4">
+                                <FormLabel htmlFor="module">Select Sensor Type</FormLabel>
+                                <Select
+                                    placeholder='Choose a Sensor Type'
+                                    value={sensorType}
+                                    onChange={handleSensorChange}
+                                >
+                                    {sensors.map((sensor) => {
+                                        return (
+                                            <option value={sensor}>{sensor}</option>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
 
 
-                        <Button type="submit" colorScheme="teal" size="md" w="100%">
-                            Create Sensor
-                        </Button>
-                    </form>
-                    <Box>
-                        {isSubmitted && (
-                            <Alert status="success" mb="4" mt="8">
-                                <AlertIcon />
-                                <AlertTitle mr={2}>Sensor Created Successfully!</AlertTitle>
-                                <CloseButton onClick={() => setSubmitted(false)} position="absolute" right="8px" top="8px" />
-                            </Alert>
-                        )}
-                        {isErrored && (
-                            <Alert status="warning" mb="4" mt="8">
-                                <AlertIcon />
-                                <AlertTitle mr={2}>Failed to Create Sensor</AlertTitle>
-                                <CloseButton onClick={() => setErrored(false)} position="absolute" right="8px" top="8px" />
-                            </Alert>
-                        )}
+                            <Button type="submit" colorScheme="teal" size="md" w="100%">
+                                Create Sensor
+                            </Button>
+                        </form>
+                        <Box>
+                            {isSubmitted && (
+                                <Alert status="success" mb="4" mt="8">
+                                    <AlertIcon />
+                                    <AlertTitle mr={2}>Sensor Created Successfully!</AlertTitle>
+                                    <CloseButton onClick={() => setSubmitted(false)} position="absolute" right="8px" top="8px" />
+                                </Alert>
+                            )}
+                            {isErrored && (
+                                <Alert status="warning" mb="4" mt="8">
+                                    <AlertIcon />
+                                    <AlertTitle mr={2}>Failed to Create Sensor</AlertTitle>
+                                    <CloseButton onClick={() => setErrored(false)} position="absolute" right="8px" top="8px" />
+                                </Alert>
+                            )}
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
-        </VStack>
+            </VStack>
         </HStack>
     );
 };

@@ -12,15 +12,33 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(
     console.log(dbName)
 })
 
+/*
+'sensorId': self.id,
+            'sensorType': self.type,
+            'moduleId': self.module_id,
+            'module': self.module,
+            'value': value,
+            'unit': self.unit,
+            'alert': self.alert,
+            'timestamp': str(datetime.now())
+
+*/
+
 // Define a Mongoose schema
 const dataSchema = new mongoose.Schema({
-    moduleID: { type: String, required: true },
+    sensorID: { type: Number, required: true },
+    moduleID: { type: Number, required: true },
+    module: { type: String, required: true },
+    value: { type: String, required: true },
+    unit: { type: String, required: true },
+    alert: { type: Boolean, required: true },
+    timestamp: { type: String, required: true },
     dataHash: { type: String, required: true, unique: true },
-    created_at: { type: Date, default: Date.now }
+    created_at: { type: Date, default: Date.now() }
 });
 
 // Create a Mongoose model based on the schema
-const DataModel = mongoose.model('SensorData', dataSchema);
+const DataModel = mongoose.model('SensorDatum', dataSchema);
 
 const encryptData = (data) => {
     const hash = crypto.createHash('sha256')
@@ -38,13 +56,12 @@ const parseObject = (data) => {
     result = result.slice(0, -2)
     return result
 }
-
 // Call the function to create a new user
 app.get('/createData', async (req, res) => {
     try {
         // Create a new user document
         data = {
-            "sensor_id": '001',
+            "sensorID": '001',
             "sensorType": "temperature",
             "time": Date.now().toString(),
         }

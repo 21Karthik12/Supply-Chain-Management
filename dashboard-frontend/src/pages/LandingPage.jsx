@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { VStack, Heading, Spinner, HStack, Grid, GridItem, Box } from '@chakra-ui/react';
 import SensorCard from '../components/SensorCard';
+<<<<<<< HEAD
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom'
 import ModFleet from './Mod_Fleet';
@@ -8,13 +9,16 @@ import ModForecast from './Mod_Forecast';
 import ModPredictive from './Mod_Predictive';
 import ModRFID from './Mod_RFID';
 import ModStorage from './Mod_Storage';
+=======
+import {useParams} from 'react-router-dom'
+>>>>>>> 7d268d1c8d0ca0b562d6fc115728b84578f8e9da
 
 const routeDict = {
-  'fleet': ["Fleet Maintenance", 1],
-  "predictive": ["Predictive Maintenance", 3],
-  "storage": ["Storage", 5],
-  "rfid": ["RFID Module", 4],
-  "forecasting": ["Forecasting", 2]
+  "fleet" : ["Fleet Maintenance", 1],
+  "predictive" : ["Predictive Maintenance", 3],
+  "storage" : ["Storage", 5],
+  "rfid" : ["RFID Module", 4],
+  "forecasting" : ["Forecasting", 2]
 }
 
 const modules = {
@@ -39,8 +43,8 @@ const LandingPage = () => {
       try {
         let url = `${import.meta.env.VITE_BASE_URL}:5000/getSensors`
         if (module_id != 0)
-          url += '/' + module_id
-        const response = await fetch(url);
+        url += '/' + module_id
+      const response = await fetch(url);
         let data = await response.json();
         data = data.sort((a, b) => a.sensorId - b.sensorId)
         setSensorData(data);

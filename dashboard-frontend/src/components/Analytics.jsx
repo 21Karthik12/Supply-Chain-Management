@@ -31,7 +31,7 @@ ChartJS.register(
   ChartStreaming
 );
 
-const socket = io('http://192.168.118.24:5000');
+const socket = io(`${import.meta.env.VITE_BASE_URL}:5000`);
 
 const Analytics = (props) => {
     let type = props.type
@@ -92,71 +92,6 @@ const Analytics = (props) => {
         });
       }, [props.id]);
 
-<<<<<<< HEAD
-
-  useEffect(() => {
-    const socket = io(`http://192.168.118.24:3000`)
-    socket.on('mqtt-message', (data) => {
-      console.log(data.topic, data.message)
-      const currentTime = new Date();
-      const year = currentTime.getFullYear();
-      const month = currentTime.getMonth() + 1; // Months are zero-based
-      const day = currentTime.getDate();
-      const hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes();
-      const seconds = currentTime.getSeconds();
-
-      const formattedTimeString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-      let temp = {
-        timestamp: formattedTimeString,
-        topic: data.topic,
-        message: data.message
-      }
-      setData((prevData) => [...prevData, temp])
-      setData((prevData) => prevData.slice(-10))
-    })
-  }, []); // Empty dependency array ensures the effect runs only once on mount
-
-
-  return (
-    <>
-      <Card width={"100%"}>
-        <CardHeader>
-          <Heading size='md'>Analytics</Heading>
-        </CardHeader>
-        <CardBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          {/* <TableContainer>
-                        <Table textAlign="center" variant="simple">
-
-                            <Thead>
-                                <Tr>
-                                    <Th>Sensor Type</Th>
-                                    <Th>Sensor ID</Th>
-                                    <Th>Status</Th>
-                                    <Th>Action</Th>
-                                </Tr>
-                                {data.map((sensor) => {
-                                    return (< Tr >
-                                        <Td>{sensor.type}</Td>
-                                        <Td>{sensor.id}</Td>
-                                        <Td>{sensor.status}</Td>
-                                        <Td>{<ControlButtons />}</Td>
-                                    </Tr>)
-                                })}
-
-                            </Thead>
-                        </Table>
-                    </TableContainer> */}
-          <div className="App" style={{ width: '400px', height: '' }}>
-            <Line data={data} options={{ animation: true }} />
-          </div>
-
-        </CardBody>
-      </Card>
-    </>
-  )
-=======
     return (
         <>
             <Card width={"100%"}>
@@ -164,14 +99,13 @@ const Analytics = (props) => {
                     <Heading size='md'>Analytics</Heading>
                 </CardHeader>
                 <CardBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <div className="App" style={{ width: '400px', height:''}}>
+                    <div className="App" style={{ width: '400px', height:'200px'}}>
                         <Line data={data} options={{ animation: true }} />
                     </div>
                 </CardBody>
             </Card>
         </>
     )
->>>>>>> 7a58eb5b8c07dec36079d188a18b9cede14d892d
 }
 
 export default Analytics

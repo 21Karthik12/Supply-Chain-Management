@@ -3,6 +3,11 @@ import { VStack, Heading, Spinner, HStack, Grid, GridItem, Box } from '@chakra-u
 import SensorCard from '../components/SensorCard';
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom'
+import ModFleet from './Mod_Fleet';
+import ModForecast from './Mod_Forecast';
+import ModPredictive from './Mod_Predictive';
+import ModRFID from './Mod_RFID';
+import ModStorage from './Mod_Storage';
 
 const routeDict = {
   'fleet': ["Fleet Maintenance", 1],
@@ -32,7 +37,7 @@ const LandingPage = () => {
     // Assuming you have a function to fetch sensor data
     const fetchSensorData = async () => {
       try {
-        let url = `http://192.168.118.24:5000/getSensors`
+        let url = `${import.meta.env.VITE_BASE_URL}:5000/getSensors`
         if (module_id != 0)
           url += '/' + module_id
         const response = await fetch(url);
@@ -80,6 +85,17 @@ const LandingPage = () => {
             ))}
           </Grid>
         )}
+        {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          {module_id === 1 && <ModFleet/>}
+          {module_id === 2 && <ModForecast/>}
+          {module_id === 3 && <ModPredictive/>}
+          {module_id === 4 && <ModRFID/> }
+          {module_id === 5 && <ModStorage/> }
+        </>
+      )}
       </VStack>
     </HStack>
   );

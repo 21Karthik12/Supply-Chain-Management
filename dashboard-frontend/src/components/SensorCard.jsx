@@ -22,16 +22,16 @@ const Card = ({ sensorId, sensorType, moduleName, moduleId, isAlert, isActive })
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(sensorId)
-  
+
     // POST request
     const data = {
       command: 'toggle'
     }
-    
-    axios.post('http://127.0.0.1:5000/controlSensor/' + sensorId, data)
-    .then((response) => {
+
+    axios.post('http://192.168.118.24:5000/controlSensor/' + sensorId, data)
+      .then((response) => {
         console.log(response)
-    })
+      })
   };
 
   const theme = extendTheme({

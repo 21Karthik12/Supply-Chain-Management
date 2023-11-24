@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { VStack, Heading, Spinner, HStack, Grid, GridItem, Box } from '@chakra-ui/react';
 import SensorCard from '../components/SensorCard';
-<<<<<<< HEAD
-import {useParams} from 'react-router-dom'
-
-const routeDict = {
-  "fleet" : ["Fleet Maintenance", 1],
-  "predictive" : ["Predictive Maintenance", 3],
-  "storage" : ["Storage", 5],
-  "rfid" : ["RFID Module", 4],
-  "forecasting" : ["Forecasting", 2]
-=======
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom'
 
@@ -20,7 +10,6 @@ const routeDict = {
   "storage": ["Storage", 5],
   "rfid": ["RFID Module", 4],
   "forecasting": ["Forecasting", 2]
->>>>>>> 347bfe42620114e65a74286a2b6a59082b40975a
 }
 
 const modules = {
@@ -39,24 +28,24 @@ const LandingPage = () => {
   let title = page ? routeDict[page][0] : ""
   let module_id = title ? routeDict[page][1] : 0
 
-    useEffect(() => {
-      // Assuming you have a function to fetch sensor data
-      const fetchSensorData = async () => {
-        try {
-          let url = 'http://localhost:5000/getSensors'
-          if (module_id != 0)
-            url += '/' + module_id
-          const response = await fetch(url);
-          let data = await response.json();
-          data = data.sort((a, b) => a.sensorId - b.sensorId)
-          setSensorData(data);
-          setLoading(false);
-          console.log(data);
-        } catch (error) {
-          setSensorData([]);
-          console.error('Error fetching sensor data:', error);
-        }
-      };
+  useEffect(() => {
+    // Assuming you have a function to fetch sensor data
+    const fetchSensorData = async () => {
+      try {
+        let url = 'http://192.168.118.24:5000/getSensors'
+        if (module_id != 0)
+          url += '/' + module_id
+        const response = await fetch(url);
+        let data = await response.json();
+        data = data.sort((a, b) => a.sensorId - b.sensorId)
+        setSensorData(data);
+        setLoading(false);
+        console.log(data);
+      } catch (error) {
+        setSensorData([]);
+        console.error('Error fetching sensor data:', error);
+      }
+    };
 
     fetchSensorData();
   }, [module_id, title]);

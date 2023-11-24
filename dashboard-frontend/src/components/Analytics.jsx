@@ -219,7 +219,7 @@ const Analytics = (props) => {
 
 
   useEffect(() => {
-    const socket = io(`${import.meta.env.VITE_BASE_URL}:3000`)
+    const socket = io(`http://192.168.118.24:3000`)
     socket.on('mqtt-message', (data) => {
       console.log(data.topic, data.message)
       const currentTime = new Date();

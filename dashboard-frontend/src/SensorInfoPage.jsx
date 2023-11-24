@@ -17,8 +17,8 @@ function SensorInfoPage() {
   const [sensorData, setSensorData] = useState([]);
   useEffect(() => {
     fetchSensorData();
-  }, []); 
-  let navigate = useNavigate(); 
+  }, []);
+  let navigate = useNavigate();
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_BASE_URL}:5000/getSensors`)
       .then(response => {
@@ -33,11 +33,11 @@ function SensorInfoPage() {
       .catch(error => {
         console.error('Error fetching data:', error);
       });
-  }, [id]); 
-  
+  }, [id]);
+
   let modul = '';
   let type = '';
-  
+
   if (matchingSensor) {
     ({ module: modul, sensorType: type } = matchingSensor);
   }
@@ -83,33 +83,33 @@ function SensorInfoPage() {
 
   ////
   return (
-    <div style={{'margin':'0 auto', 'width':'100%'}}>
-        <h1 style={{'fontSize':'1.7rem'}}>Sensor #{id}</h1> 
-        <div className="wrapper" style={{'fontSize':'1.1rem'}}>     
-            <div className="box">
-                <div className="box-content">
-                    <div className="grid">
-                        <div className="item bold">SENSOR TYPE:</div>
-                        <div className="item">{type}</div>
-                        <div className="item bold">SENSOR ID:</div>
-                        <div className="item">{id}</div>
-                        <div className="item bold">MODULE:</div>
-                        <div className="item">{modul}</div>
-                        <div className="item bold">STATUS:</div>
-                        <div className="item">Running</div>
-                    </div>
+    <div style={{ 'margin': '0 auto', 'width': '100%' }}>
+      <h1 style={{ 'fontSize': '1.7rem' }}>Sensor #{id}</h1>
+      <div className="wrapper" style={{ 'fontSize': '1.1rem' }}>
+        <div className="box">
+          <div className="box-content">
+            <div className="grid">
+              <div className="item bold">SENSOR TYPE:</div>
+              <div className="item">{type}</div>
+              <div className="item bold">SENSOR ID:</div>
+              <div className="item">{id}</div>
+              <div className="item bold">MODULE:</div>
+              <div className="item">{modul}</div>
+              <div className="item bold">STATUS:</div>
+              <div className="item">Running</div>
+            </div>
 
-                    <div className="buttons" style={{'marginTop':'3rem'}}>
-                        <button className="button" onClick={() => handleStop(id)}>Stop</button>
-                        <button className="button" onClick={() => handleToggle(id)}>Toggle</button>
-                        <button className="button" onClick={() => handleResolve(id)}>Resolve</button>
-                    </div>
-                </div>
-            </div>  
-            <div className="box">
-                <Analytics id={id} type={type}/>    
-            </div>  
+            <div className="buttons" style={{ 'marginTop': '3rem' }}>
+              <button className="button" onClick={() => handleStop(id)}>Stop</button>
+              <button className="button" onClick={() => handleToggle(id)}>Toggle</button>
+              <button className="button" onClick={() => handleResolve(id)}>Resolve</button>
+            </div>
+          </div>
         </div>
+        <div className="box">
+          <Analytics id={id} type={type} />
+        </div>
+      </div>
     </div>
   )
 }

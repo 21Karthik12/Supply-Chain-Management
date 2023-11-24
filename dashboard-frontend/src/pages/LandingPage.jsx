@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { VStack, Heading, Spinner, HStack, Grid, GridItem, Box } from '@chakra-ui/react';
 import SensorCard from '../components/SensorCard';
-<<<<<<< HEAD
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom'
 import ModFleet from './Mod_Fleet';
@@ -9,9 +8,6 @@ import ModForecast from './Mod_Forecast';
 import ModPredictive from './Mod_Predictive';
 import ModRFID from './Mod_RFID';
 import ModStorage from './Mod_Storage';
-=======
-import {useParams} from 'react-router-dom'
->>>>>>> 7d268d1c8d0ca0b562d6fc115728b84578f8e9da
 
 const routeDict = {
   "fleet" : ["Fleet Maintenance", 1],

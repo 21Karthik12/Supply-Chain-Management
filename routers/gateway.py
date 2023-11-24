@@ -32,6 +32,7 @@ def handle_json_message(data):
     print('JSON Message:', data)
     server.emit('json_response', {
                 'response': 'Received your JSON message'}, namespace='/router')
+    server.emit('json', data, namespace='/')
     # Perform other operations as needed
 
 

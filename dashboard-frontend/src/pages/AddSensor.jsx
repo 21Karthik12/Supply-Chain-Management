@@ -17,7 +17,8 @@ const YourComponent = () => {
     const [isSubmitted, setSubmitted] = useState(false)
     const [isErrored, setErrored] = useState(false)
     const base_url = import.meta.env.VITE_BASE_URL
-    const url = `${base_url}:5000`
+    const url = `${base_url}:5000` 
+
 
     const modules = [
         "Fleet",
@@ -63,7 +64,7 @@ const YourComponent = () => {
             setSubmitted(true)
         })
         .catch((error) => {
-            console.err(error)
+            console.error(error)
             setErrored(true)
         })
         // Your form submission logic here

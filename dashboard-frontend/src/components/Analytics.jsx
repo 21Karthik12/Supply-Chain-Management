@@ -162,7 +162,7 @@ ChartJS.register(
   ChartStreaming
 );
 
-const socket = io('http://192.168.108.89:3001');
+const socket = io(`http://${import.meta.env.VITE_BASE_URL}:3001`);
 
 const Analytics = (props) => {
 

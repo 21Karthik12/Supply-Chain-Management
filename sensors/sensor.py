@@ -156,6 +156,6 @@ if __name__ == '__main__':
                 }, namespace='/alert')
             client.emit('json_message', data,
                         namespace='/mote')
-        time.sleep(1)
+        time.sleep(5)
 
     client.disconnect()

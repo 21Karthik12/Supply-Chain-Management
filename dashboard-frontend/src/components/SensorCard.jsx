@@ -123,7 +123,7 @@ const Card = ({ sensorId, sensorType, moduleName, moduleId, isAlert, isActive, a
       <Box borderBottom="1px" borderColor="gray.200"></Box>
 
       {/* View Button */}
-      { alertTime.length > 0 ? (
+      { alertTime.length > 0  && moduleName === 'Predictive'? (
       <Flex justify="space-between" p="4">
           <Button as={Link} to={`/sensor/${sensorId}`} colorScheme="blue" size="xs">
             View

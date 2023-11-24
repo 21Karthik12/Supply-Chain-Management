@@ -4,6 +4,12 @@ from flask_cors import CORS
 import socketio
 import sys
 import subprocess
+import pymongo
+import numpy as np
+from datetime import datetime, timedelta
+from keras.models import Sequential
+from keras.layers import Dense, LSTM
+from sklearn.linear_model import LinearRegression
 
 
 class Router:
@@ -37,8 +43,20 @@ app = Flask(__name__)
 CORS(app)
 server = flask_socketio.SocketIO(app, cors_allowed_origins="*")
 client = socketio.Client()
+mongo_client = pymongo.MongoClient(
+    'mongodb+srv://ds952073:ewebC2Mb1DxZUag5@cluster0.d2el9gu.mongodb.net/')
+
 router = None
 module_details = None
+db = None
+collection = None
+
+predictive_model = Sequential()
+predictive_model.add(LSTM(10, input_shape=(1, 1)))
+predictive_model.add(Dense(1))
+predictive_model.compile(optimizer='adam', loss='mean_squared_error')
+
+forecasting_model = LinearRegression()
 
 
 @app.route('/')
@@ -61,7 +79,7 @@ def handle_json_message(data):
     print('JSON Message:', data)
     server.emit('json_response', {
                 'response': 'Received your JSON message'}, namespace='/mote')
-    client.emit('json_message', data, namespace='/router')
+    # client.emit('json_message', data, namespace='/router')
     # Perform other operations as needed
 
 
@@ -129,6 +147,47 @@ def handle_get_sensor(sensorId):
     return jsonify({'message': 'Sensor not found'}), 400
 
 
+@app.route('/analytics', methods=['GET'])
+def handle_analytics():
+    global router, predictive_model, collection
+    response = []
+    for sensor_id in router.sensors.keys():
+        data = collection.find({"sensorId": sensor_id})
+        data_points = [int(point['alert']) for point in data]
+        pred_output = predictive_model.predict(
+            np.array(data_points).reshape(-1, 1))
+        next_alert = int(np.mean(pred_output))
+        response.append({
+            "sensorId": sensor_id,
+            "nextAlert": next_alert
+        })
+    return jsonify(response), 200
+
+
+@app.route('/forecasting/<sensorId>', methods=['GET'])
+def handle_forecasting(sensorId):
+    global router, forecasting_model, collection
+    response = []
+    data = collection.find({"sensorId": int(sensorId)}).sort(
+        'timestamp', pymongo.DESCENDING).limit(30)
+    data_points = [float(point['value']) for point in data]
+    print('Fetched data:', data_points)
+    data_points.reverse()
+    y = data_points
+    X = np.array((range(1, len(y) + 1))).reshape(-1, 1)
+    forecasting_model.fit(X, y)
+    X_test = np.array(list(range(len(y) + 1, len(y) + 11))).reshape(-1, 1)
+    y_pred = forecasting_model.predict(X_test)
+    curr_time = datetime.now()
+    for y in y_pred:
+        response.append({
+            'value': float(y),
+            'timestamp': str(curr_time)
+        })
+        curr_time += timedelta(seconds=1)
+    return jsonify(response), 200
+
+
 @client.on('connect', namespace='/router')
 def on_connect():
     print('Connected to gateway')
@@ -139,6 +198,22 @@ def on_disconnect():
     print('Disconnected from gateway')
 
 
+def train_predictive_model():
+    global predictive_model
+    X = np.array([[2], [3], [4], [1], [5], [2], [3], [6], [2], [1],
+                  [4], [2], [3], [1], [5], [2], [4], [1], [3], [2],
+                  [1], [4], [2], [5], [1], [3], [2], [4], [1], [6]])
+
+    y = np.array([[3], [2], [1], [5], [1], [2], [4], [1], [3], [2],
+                  [1], [4], [2], [5], [1], [3], [2], [4], [1], [6],
+                  [2], [3], [4], [1], [5], [2], [3], [6], [2], [1]])
+
+    X = np.array(X).reshape(-1, 1, 1)
+    y = np.array(y).reshape(-1, 1)
+
+    predictive_model.fit(X, y, epochs=100, batch_size=1)
+
+
 if __name__ == '__main__':
     module_details = {
         "Fleet": (1, "5001"),
@@ -147,11 +222,18 @@ if __name__ == '__main__':
         "RFID": (4, "5004"),
         "Storage": (5, "5005")
     }
-    
+
     module = sys.argv[1]
     id, port = module_details[module]
     router = Router(id, module, port)
-    
+    router.sensors[2] = None
+
+    if module == 'Predictive':
+        train_predictive_model()
+
+    db = mongo_client['test']
+    collection = db['sensordata']
+
     gateway_url = 'http://127.0.0.1:5000'
     client.connect(gateway_url, namespaces=['/router'])
 

@@ -11,11 +11,11 @@ import io from 'socket.io-client'
 
 
 const routeDict = {
-  "fleet" : ["Fleet Maintenance", 1],
-  "predictive" : ["Predictive Maintenance", 3],
-  "storage" : ["Storage", 5],
-  "rfid" : ["RFID Module", 4],
-  "forecasting" : ["Forecasting", 2]
+  "fleet": ["Fleet Maintenance", 1],
+  "predictive": ["Predictive Maintenance", 3],
+  "storage": ["Storage", 5],
+  "rfid": ["RFID Module", 4],
+  "forecasting": ["Forecasting", 2]
 }
 
 const modules = {
@@ -55,8 +55,8 @@ const LandingPage = () => {
       try {
         let url = `${import.meta.env.VITE_BASE_URL}:5000/getSensors`
         if (module_id != 0)
-        url += '/' + module_id
-      const response = await fetch(url);
+          url += '/' + module_id
+        const response = await fetch(url);
         let data = await response.json();
         data = data.filter(value => value != null)
         data = data.sort((a, b) => a.sensorId - b.sensorId)
@@ -76,7 +76,7 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchPredictiveAnalytics = async () => {
       try {
-        if(shouldFetchAnalytics) {
+        if (shouldFetchAnalytics) {
           let url = `${import.meta.env.VITE_BASE_URL}:5000/analytics`
           const response = await fetch(url);
           let data = await response.json();
@@ -102,7 +102,7 @@ const LandingPage = () => {
 
     socket.on('json', (incomingData) => {
       if (incomingData && shouldFetchRfidData) {
-        if(incomingData.moduleId == 4) {
+        if (incomingData.moduleId == 4) {
           let newScannedId = incomingData.scannedId;
           let newTimestamp = incomingData.timestamp;
           const parsedTimestamp = new Date(newTimestamp);
@@ -112,15 +112,15 @@ const LandingPage = () => {
             minute: 'numeric',
             second: 'numeric',
           })}:${('00' + parsedTimestamp.getMilliseconds()).slice(-3).slice(0, 2)}`;
-  
+
           // Check if the scannedId already exists in the array
           const existingEntryIndex = rfidData.findIndex((entry) => entry.scannedId === newScannedId);
-  
+
           if (existingEntryIndex !== -1) {
             // If the scannedId exists, remove the existing entry
             dispatchRfidData({ type: 'REMOVE', payload: newScannedId });
           }
-  
+
           // Add the new entry to the array
           dispatchRfidData({ type: 'ADD', payload: { scannedId: newScannedId, timestamp: formattedTime } });
         }
@@ -163,10 +163,10 @@ const LandingPage = () => {
           module_id==2 && <h1></h1>
         }
         {
-          module_id==3 && <SensorTablePredictive data={predictiveAnalytics}/>
+          module_id == 3 && <SensorTablePredictive data={predictiveAnalytics} />
         }
         {
-          module_id==4 && <RfidTable data={rfidData}/>
+          module_id == 4 && <RfidTable data={rfidData} />
         }
       </VStack>
     </HStack>

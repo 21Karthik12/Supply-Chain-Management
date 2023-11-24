@@ -145,6 +145,13 @@ def handle_get_analytics():
     return response.json(), response.status_code
 
 
+@app.route('/forecasting/<sensorId>', methods=['GET'])
+def handle_get_forecasting(sensorId):
+    response = requests.get(
+        routers['Forecasting'] + '/forecasting' + str(sensorId))
+    return response.json(), response.status_code
+
+
 if __name__ == '__main__':
     routers = {
         "Fleet": 'http://127.0.0.1:5001',

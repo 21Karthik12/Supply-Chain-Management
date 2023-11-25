@@ -101,7 +101,8 @@ const LandingPage = () => {
       console.log('Connected to the server');
     });
 
-    socket.on('rfid', (incomingData) => {
+    socket.on('json', (incomingData) => {
+      console.log(incomingData)
       if (incomingData && shouldFetchRfidData) {
         if (incomingData.moduleId == 4) {
           let newScannedId = incomingData.scannedId;
@@ -113,17 +114,20 @@ const LandingPage = () => {
             minute: 'numeric',
             second: 'numeric',
           })}:${('00' + parsedTimestamp.getMilliseconds()).slice(-3).slice(0, 2)}`;
-
+          console.log(rfidData)
           // Check if the scannedId already exists in the array
           const existingEntryIndex = rfidData.findIndex((entry) => entry.scannedId === newScannedId);
+          console.log(rfidData)
 
           if (existingEntryIndex !== -1) {
             // If the scannedId exists, remove the existing entry
             dispatchRfidData({ type: 'REMOVE', payload: newScannedId });
           }
-
-          // Add the new entry to the array
-          dispatchRfidData({ type: 'ADD', payload: { scannedId: newScannedId, timestamp: formattedTime } });
+          else {
+            // Add the new entry to the array
+            dispatchRfidData({ type: 'ADD', payload: { scannedId: newScannedId, timestamp: formattedTime } });
+          }
+          console.log(rfidData)
         }
       }
     });

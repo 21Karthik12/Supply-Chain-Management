@@ -1,5 +1,7 @@
 import { HStack, VStack, Heading, Box, Flex, Text, Input, Table, Thead, Tr, Th, Tbody, Td, Select, Button, FormLabel } from "@chakra-ui/react"
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
+import { IoAlertCircle } from "react-icons/io5";
 import axios from 'axios'
 
 const VerifyData = () => {
@@ -8,10 +10,17 @@ const VerifyData = () => {
     const [moduleId, setModuleId] = useState(0);
     const [moduleType, setModuleType] = useState('');
     const [hashArr, setHashArr] = useState([])
+    const [isVerified, setIsVerified] = useState(false)
+    const [isMongo, setIsMongo] = useState(false)
+    const [isHyper, setIsHyper] = useState(false)
     const [mongoData, setMongoData] = useState([])
     const [hyperData, setHyperData] = useState([])
     const [message, setMessage] = useState("Is your sensor integrity in place?")
 
+    useEffect(()=>{
+        console.log("MONGO", mongoData, "HYPER", hyperData)
+    }, [mongoData, hyperData])
+       
 
 
     const handleSubmit = async () => {
@@ -19,6 +28,17 @@ const VerifyData = () => {
         console.log('Integer Field 1:', sensorId);
         console.log('Integer Field 2:', moduleId);
         console.log('Dropdown Value:', moduleType);
+
+        setMongoData([])
+        setHyperData([])
+        setIsVerified(false);
+        setIsMongo(false);
+        setIsHyper(false);
+
+
+        const sleep = (milliseconds) => {
+            return new Promise(resolve => setTimeout(resolve, milliseconds));
+          };
 
         let url = `${import.meta.env.VITE_BASE_URL}:3001/getDataFromMongo`
 
@@ -39,43 +59,81 @@ const VerifyData = () => {
           
           setMessage("Fetching data from MongoDB Cloud...")
           // Making a POST request with headers
-          axios.post(url, data, { headers })
+          sleep(2000).then(() => {
+            axios.post(url, data, { headers })
             .then(response => {
               console.log('MONGO:', response.data);
-              setMongoData(response.data)
-              let tempMongo = mongoData
-              tempMongo.forEach(obj => {
-                obj.mongo = true
-                obj.hyper = false
-                obj.integrity = false
-              })
+              let tempMongo = response.data
               setMongoData(tempMongo)
+            setIsMongo(true)
+            let updatedArray = response.data.map(obj => {
+                return { ...obj, mongo: 'Fetched', hyper: 'Waiting', integrity: false  }; // Adding a new property 'age' with a default value
+              });
+
+              console.log("UPDATED ARRAY", updatedArray)
+              // Update the state with the new array
+              setMongoData(updatedArray);
+
               console.log("stuff added: ", mongoData)
               const hashes = response.data.map(sensor => sensor.dataHash)
               setHashArr(hashes)
-
-             axios.get(`${import.meta.env.VITE_BASE_URL}:3001/getDataFromFabric`).then((res) => {
-                console.log("FABRIC: ", res.data)
-                setHyperData(res.data)
-                setMessage("Fetching data from Hyperledger for verification...")
-
-                // Filter is based on sensorID
-                const filteredObjects = getObjectsByHashes(res.data, hashArr);
-                console.log("Filtered", filteredObjects)
-                setHyperData(filteredObjects)
-            })
-
-            })
-            .catch(error => {
-              console.error('Error:', error);
+              
+              setMessage("Fetching data from Hyperledger for verification...")
+              sleep(5000).then(() => {
+                axios.get(`${import.meta.env.VITE_BASE_URL}:3001/getDataFromFabric`).then((res) => {
+                    console.log("FABRIC: ", res.data)
+                    setHyperData(res.data)
+                    setIsHyper(true)
+                    setMessage("Checking Integrity....")
+                    const nextCounters = updatedArray.map(obj => {
+                        // Make changes to the object as needed
+                        return { ...obj, hyper: 'Fetched', integrity: false  }; // Adding a new property 'age' with a default value
+                      });
+    
+                    console.log("WORKS", nextCounters);
+    
+                    setMongoData(nextCounters);
+                    let hashes = nextCounters.map(obj => obj.dataHash)
+                    console.log("hashs", hashes)
+    
+                    // Filter is based on sensorID
+                    const filteredObjects = getObjectsByHashes(res.data, hashes);
+                    console.log("Filtered", filteredObjects)
+                    setHyperData(filteredObjects)
+                    setMessage("Verifying Data Integrity...")
+                    // compare integrity of both data arrays
+                    // all data => nextCounters
+                    // hashes => filteredObjects
+                    // for every nextCounter present in filteredObjects array, it is true
+    
+                    const finalData = nextCounters.map(obj => {
+                        let hash = obj.dataHash
+                        let check = filteredObjects.filter(obj => obj.Hash === hash)
+                        if(check.length){
+                            return {...obj, integrity: true}
+                        } else {
+                            return obj
+                        }
+                    }) 
+                    console.log("FINAL ARRAY", finalData)
+                    setMongoData(finalData)
+                    console.log("chal jaa please", mongoData)
+                    sleep(5000).then(() => {
+                        setMessage("Integrity Checked")
+                        setIsVerified(true)
+                    })
+                })
+              })
+             
+            
+        })
+        .catch(error => {
+            console.error('Error:', error);
             });
-
             
-            // Function to fetch objects based on hash values
-            
-            
-           
-            
+          })
+          
+         // Function to fetch objects based on hash values
 
     };
     return (
@@ -133,8 +191,11 @@ const VerifyData = () => {
                     </Flex>                
                     </Box>
                     <Box> 
-                        <Box border={"1px solid gray"} m={"1.5rem"} p={"1rem"}>
-                            <Text fontWeight={"500"} color={"gray"} fontSize={"0.9rem"}> {message} </Text>
+                        <Box border={"1px solid gray"} m={"1.5rem"} p={"1rem"}> 
+                        {
+                            isVerified ? (<Text fontWeight={"500"} color={"gray"} fontSize={"0.9rem"}> {message} </Text>) : (<Text fontWeight={"500"} color={"gray"} fontSize={"0.9rem"}> {message} </Text>)
+                        }
+                            
                         </Box>
                     <Table variant="simple" borderWidth="1px" borderRadius="md" overflow="hidden">
                         <Thead>
@@ -159,9 +220,19 @@ const VerifyData = () => {
                                 {/* <Td textAlign="center">{item.moduleId}</Td> */}
                                 <Td textAlign="center">{item.value}</Td>
                                 <Td textAlign="center">{item.unit}</Td>
-                                <Td textAlign="center">{item.mongo}</Td>
-                                <Td textAlign="center">{item.hyper}</Td>
-                                <Td textAlign={"center"}>{item.integrity} </Td>
+                                {isMongo ?  <Td textAlign="center" justifyContent={"center"}>{item.mongo} {item.mongo == 'Fetched' ? (<IoIosCheckmarkCircleOutline color={"green"}/>) : <IoAlertCircle color={"red"}/>}</Td>
+                                                                :
+                                (<Td textAlign={"center"}>Waiting</Td>)
+                                }
+                                 {isHyper ?  <Td textAlign="center" justifyContent={"center"}> {item.hyper} {item.hyper == 'Fetched' ? (<IoIosCheckmarkCircleOutline color={"green"}/>) : <IoAlertCircle color={"red"}/>} </Td>
+                                                                :
+                                (<Td textAlign={"center"}>Waiting</Td>)
+                                }
+                                {console.log(item.integrity)}
+                                {isVerified ? 
+                                (<Td textAlign={"center"} justifyContent={"center"}>{item.integrity ? (<IoIosCheckmarkCircleOutline color={"green"}/>) : <IoAlertCircle color={"red"}/>} </Td> ):
+                                (<Td textAlign={"center"}>Waiting</Td>)
+                                }
 
                             </Tr>
                             ))}

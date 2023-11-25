@@ -8,6 +8,7 @@ import ForecastTable from '../components/ForecastTable';
 import { useParams } from 'react-router-dom'
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import io from 'socket.io-client'
+import Mod_Fleet from './Mod_Fleet';
 
 
 const routeDict = {
@@ -189,7 +190,7 @@ const LandingPage = () => {
           module_id == 4 && <RfidTable data={getUniqueById(rfidData)} justifyContent={"center"} />
         }
         {
-          module_id == 1 && <ModFleet />
+          module_id == 1 && <Mod_Fleet />
         }
       </VStack>
     </HStack>

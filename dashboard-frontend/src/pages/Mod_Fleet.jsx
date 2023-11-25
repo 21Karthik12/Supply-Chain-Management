@@ -9,7 +9,7 @@ const Mod_Fleet = () => {
     socket.on('connect', () => {
         console.log('Connected to the server');
     });
-    let dest = ["-33.8569", "150.2152"]
+    let dest = ["28.8724", "77.7891"]
     let coordinates = []
     let apiKey = "https://www.google.com/maps/embed/v1/directions?key=AIzaSyBrKuh2cITMMHsvbR4omhTFfTn6g024l9Y"
 
@@ -18,7 +18,7 @@ const Mod_Fleet = () => {
             coordinates = incomingData.value.split("|")
             let temp = apiKey + "&origin=" + coordinates[0] + "," + coordinates[1] + "&destination=" + dest[0] + "," + dest[1]
             setReqUrl(temp)
-            console.log(reqUrl)
+            //console.log(reqUrl)
         }
     })
     

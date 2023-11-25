@@ -99,7 +99,7 @@ const Analytics = (props) => {
           <Heading size='md'>Analytics</Heading>
         </CardHeader>
         <CardBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div className="App" style={{ width: '400px', height: '' }}>
+          <div className="App" style={{ width: '400px', height: '200px' }}>
             <Line data={data} options={{ animation: true }} />
           </div>
         </CardBody>

@@ -68,7 +68,7 @@ def handle_create_node():
 def handle_rfid():
     uid = request.args.get('card_uid')
     response = {
-        'scannerId':uid,
+        'scannedId': uid,
         'timestamp': str(datetime.now())
     }
     server.emit('rfid', response)

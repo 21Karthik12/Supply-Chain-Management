@@ -135,8 +135,7 @@ def handle_control_node():
 @app.route('/getSensors', methods=['GET'])
 def handle_get_sensors():
     global router
-    # filtered_sensors = [value for value in router.sensors.values() if value is not None]
-    return jsonify(list(router.sensors.values()))
+    return jsonify(list(router.sensors.values())), 200
 
 
 @app.route('/getSensor/<sensorId>', methods=['GET'])
@@ -231,7 +230,6 @@ if __name__ == '__main__':
     module = sys.argv[1]
     id, port = module_details[module]
     router = Router(id, module, port)
-    # router.sensors[2] = None
 
     if module == 'Predictive':
         train_predictive_model()

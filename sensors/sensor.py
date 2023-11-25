@@ -156,6 +156,9 @@ if __name__ == '__main__':
                 }, namespace='/alert')
             client.emit('json_message', data,
                         namespace='/mote')
-        time.sleep(5)
+        if sensor.type == 'GPS':
+            time.sleep(30)
+        else:
+            time.sleep(5)
 
     client.disconnect()

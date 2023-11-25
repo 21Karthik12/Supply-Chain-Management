@@ -52,8 +52,8 @@ class Sensor:
             if value[-1] == '7':
                 self.alert = True
         elif self.type == 'GPS':
-            lat_value = round(-90 + random.random() * 180, ndigits=4)
-            long_value = round(-180 + random.random() * 360, ndigits=4)
+            lat_value = round(22 + random.random(), ndigits=4)
+            long_value = round(73 + random.random() * 5, ndigits=4)
             value = str(lat_value) + '|' + str(long_value)
         else:
             self.try_alert()

@@ -69,6 +69,7 @@ def handle_rfid():
     uid = request.args.get('card_uid')
     response = {
         'scannedId': uid,
+        'moduleId': 4,
         'timestamp': str(datetime.now())
     }
     server.emit('json', response)

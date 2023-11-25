@@ -69,7 +69,7 @@ const Mod_Storage = () => {
     let allSensors = _temperatureSensors.concat(_humiditySensors, _pressureSensors)
 
     return (
-        <HStack>
+        <HStack justifyContent={"center"}>
             <VStack spacing={4} maxW={'max-content'} w={'80vw'} justifyContent={'center'} alignItems={'center'} align="stretch" p={4}>
                 <Heading as="h1" size="xl" mb={4}>
                     Storage

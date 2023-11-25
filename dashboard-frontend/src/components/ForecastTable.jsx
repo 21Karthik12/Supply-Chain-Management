@@ -28,7 +28,7 @@ const ForecastTable = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}:5000/forecasting/1`);
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}:5000/forecasting/${props.sensorId}`);
         const jsonData = await response.json();
         const labels = jsonData.map(entry => {
           const timestamp = new Date(entry.timestamp);
@@ -53,11 +53,11 @@ const ForecastTable = (props) => {
     };
 
     fetchData();
-  }, []); 
+  }, []);
 
   return (
     <div>
-      <div className="wrapper" style={{ fontSize: '1.1rem', border:'None' }}>
+      <div className="wrapper" style={{ fontSize: '1.1rem', border: 'None' }}>
         <div className="box">
           <Card width={'100%'}>
             <CardHeader>

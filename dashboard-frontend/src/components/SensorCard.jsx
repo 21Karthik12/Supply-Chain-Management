@@ -123,22 +123,22 @@ const Card = ({ sensorId, sensorType, moduleName, moduleId, isAlert, isActive, a
       <Box borderBottom="1px" borderColor="gray.200"></Box>
 
       {/* View Button */}
-      { alertTime.length > 0  && moduleName === 'Predictive'? (
-      <Flex justify="space-between" p="4">
+      {alertTime && alertTime.length > 0 && moduleName === 'Predictive' ? (
+        <Flex justify="space-between" p="4">
           <Button as={Link} to={`/sensor/${sensorId}`} colorScheme="blue" size="xs">
             View
           </Button>
           {moduleName === 'Predictive' && alertTime && alertTime.length > 0 && (
             <Text fontSize="sm">
-              Alt time: {alertTime[0].nextAlert*5}
+              Alt time: {alertTime[0].nextAlert * 5}
             </Text>
           )}
-      </Flex>) : (
-      <Flex justify="center" p="4">
+        </Flex>) : (
+        <Flex justify="center" p="4">
           <Button as={Link} to={`/sensor/${sensorId}`} colorScheme="blue" size="xs">
             View
           </Button>
-      </Flex>) 
+        </Flex>)
       }
     </Box>
   );

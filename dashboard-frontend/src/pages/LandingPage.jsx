@@ -5,9 +5,10 @@ import SensorTablePredictive from '../components/SensorTablePredictive';
 
 import RfidTable from '../components/RfidTable';
 import ForecastTable from '../components/ForecastTable';
-import {useParams} from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import io from 'socket.io-client'
+import Mod_Fleet from './Mod_Fleet';
 
 
 const routeDict = {
@@ -63,7 +64,7 @@ const LandingPage = () => {
         setSensorData(data);
         setLoading(false);
         console.log(data);
-        
+
       } catch (error) {
         setSensorData([]);
         console.error('Error fetching sensor data:', error);
@@ -80,6 +81,7 @@ const LandingPage = () => {
           let url = `${import.meta.env.VITE_BASE_URL}:5000/analytics`
           const response = await fetch(url);
           let data = await response.json();
+          data = data.filter(value => value != null)
           data = data.sort((a, b) => a.sensorId - b.sensorId)
           setPredictiveAnalytics(data);
           setLoading(false);
@@ -101,6 +103,7 @@ const LandingPage = () => {
     });
 
     socket.on('json', (incomingData) => {
+      console.log(incomingData)
       if (incomingData && shouldFetchRfidData) {
         if (incomingData.moduleId == 4) {
           let newScannedId = incomingData.scannedId;
@@ -112,17 +115,20 @@ const LandingPage = () => {
             minute: 'numeric',
             second: 'numeric',
           })}:${('00' + parsedTimestamp.getMilliseconds()).slice(-3).slice(0, 2)}`;
-
+          console.log(rfidData)
           // Check if the scannedId already exists in the array
           const existingEntryIndex = rfidData.findIndex((entry) => entry.scannedId === newScannedId);
+          console.log(rfidData)
 
           if (existingEntryIndex !== -1) {
             // If the scannedId exists, remove the existing entry
             dispatchRfidData({ type: 'REMOVE', payload: newScannedId });
           }
-
-          // Add the new entry to the array
-          dispatchRfidData({ type: 'ADD', payload: { scannedId: newScannedId, timestamp: formattedTime } });
+          else {
+            // Add the new entry to the array
+            dispatchRfidData({ type: 'ADD', payload: { scannedId: newScannedId, timestamp: formattedTime } });
+          }
+          console.log(rfidData)
         }
       }
     });
@@ -160,13 +166,16 @@ const LandingPage = () => {
           </Grid>
         )}
         {
-          module_id==2 && <h1></h1>
+          module_id == 2 && <h1></h1>
         }
         {
           module_id == 3 && <SensorTablePredictive data={predictiveAnalytics} />
         }
         {
           module_id == 4 && <RfidTable data={rfidData} />
+        }
+        {
+          module_id == 1 && <Mod_Fleet />
         }
       </VStack>
     </HStack>

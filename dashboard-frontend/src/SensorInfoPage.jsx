@@ -21,8 +21,8 @@ function SensorInfoPage() {
   const [sensorData, setSensorData] = useState([]);
   useEffect(() => {
     fetchSensorData();
-  }, []); 
-  let navigate = useNavigate(); 
+  }, []);
+  let navigate = useNavigate();
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_BASE_URL}:5000/getSensors`)
       .then(response => {
@@ -106,20 +106,20 @@ function SensorInfoPage() {
                         )}
                     </div>
 
-                    <div className="buttons" style={{'marginTop':'3rem'}}>
-                        <button className="button" onClick={() => handleStop(id)}>Disconnect</button>
-                        <button className="button" onClick={() => handleToggle(id)}>Toggle</button>
-                        <button className="button" onClick={() => handleResolve(id)}>Resolve</button>
-                    </div>
-                </div>
-            </div>  
-            <div className="box">
-                <Analytics id={id} type={type}/>    
-            </div>  
-            {
-                modul == 'Forecasting' && <ForecastTable data={type}/>
-            }
+            <div className="buttons" style={{ 'marginTop': '3rem' }}>
+              <button className="button" onClick={() => handleStop(id)}>Disconnect</button>
+              <button className="button" onClick={() => handleToggle(id)}>Toggle</button>
+              <button className="button" onClick={() => handleResolve(id)}>Resolve</button>
+            </div>
+          </div>
         </div>
+        <div className="box">
+          <Analytics id={id} type={type} />
+        </div>
+        {
+          modul == 'Forecasting' && <ForecastTable data={type} sensorId={id} />
+        }
+      </div>
     </div>
   )
 }

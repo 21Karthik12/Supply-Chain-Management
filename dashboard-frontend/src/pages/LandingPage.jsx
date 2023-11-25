@@ -3,6 +3,7 @@ import { VStack, Heading, Spinner, HStack, Grid, GridItem, Box, Table } from '@c
 import SensorCard from '../components/SensorCard';
 import SensorTablePredictive from '../components/SensorTablePredictive';
 import RfidTable from '../components/RfidTable';
+import ModFleet from './Mod_Fleet';
 import { useParams } from 'react-router-dom'
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import io from 'socket.io-client'
@@ -160,6 +161,9 @@ const LandingPage = () => {
         }
         {
           module_id == 4 && <RfidTable data={rfidData} />
+        }
+        {
+          module_id == 1 && <ModFleet />
         }
       </VStack>
     </HStack>

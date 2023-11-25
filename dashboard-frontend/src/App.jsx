@@ -8,18 +8,20 @@ import Sidebar from './components/Sidebar';
 import AddSensor from './pages/AddSensor';
 import OldLandingPage from './pages/OldLandingPage';
 import SensorInfoPage from './SensorInfoPage'
+import Mod_Storage from './pages/Mod_Storage';
 function App() {
   const [count, setCount] = useState(0);
-  
+
   return (
     <BrowserRouter>
       <HStack>
         <Sidebar />
-        <main style={{ minHeight: "93vh", width:"100%" }}>
+        <main style={{ minHeight: "93vh", width: "100%" }}>
           <Routes>
             <Route exact path='/' element={<LandingPage />}></Route>
+            <Route exact path='/storage' element={<Mod_Storage />}></Route>
             <Route exact path='/:page' element={<LandingPage />}></Route>
-            <Route path="/sensor/:sensorId" element={<SensorInfoPage/>} />
+            <Route path="/sensor/:sensorId" element={<SensorInfoPage />} />
             <Route path="/addSensor" element={<AddSensor />} />
           </Routes>
         </main>

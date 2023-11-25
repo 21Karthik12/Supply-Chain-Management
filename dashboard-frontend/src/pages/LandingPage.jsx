@@ -101,7 +101,7 @@ const LandingPage = () => {
       console.log('Connected to the server');
     });
 
-    socket.on('rfid', (incomingData) => {
+    socket.on('json', (incomingData) => {
       if (incomingData && shouldFetchRfidData) {
         if (incomingData.moduleId == 4) {
           let newScannedId = incomingData.scannedId;

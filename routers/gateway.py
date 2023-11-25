@@ -71,7 +71,7 @@ def handle_rfid():
         'scannedId': uid,
         'timestamp': str(datetime.now())
     }
-    server.emit('rfid', response)
+    server.emit('json', response)
     return jsonify(response), 200
 
 

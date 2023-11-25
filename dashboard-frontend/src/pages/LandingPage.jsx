@@ -8,6 +8,7 @@ import ForecastTable from '../components/ForecastTable';
 import { useParams } from 'react-router-dom'
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import io from 'socket.io-client'
+import Mod_Fleet from './Mod_Fleet';
 
 
 const routeDict = {
@@ -26,6 +27,23 @@ const modules = {
   5: "Storage"
 }
 
+const getUniqueById = (array) => {
+  const uniqueArray = [];
+  const seenIds = new Set();
+
+  array = array.sort((a, b) => b.timestamp - a.timestamp)
+  array.forEach((item) => {
+    const itemId = item.scannedId;
+
+    if (!seenIds.has(itemId)) {
+      seenIds.add(itemId);
+      uniqueArray.push(item);
+    }
+  });
+
+  return uniqueArray;
+}
+
 const LandingPage = () => {
   //const [sensorData, setSensorData] = useState([]);
   const [loading, setLoading] = useState(false); //change to true
@@ -35,8 +53,8 @@ const LandingPage = () => {
     switch (action.type) {
       case 'ADD':
         return [...state, action.payload];
-      case 'REMOVE':
-        return state.filter((entry) => entry.scannedId !== action.payload);
+      case 'CHANGE':
+        return [...state.filter((entry) => entry.scannedId !== action.payload.scannedId), action.payload];
       default:
         return state;
     }
@@ -117,16 +135,14 @@ const LandingPage = () => {
           console.log(rfidData)
           // Check if the scannedId already exists in the array
           const existingEntryIndex = rfidData.findIndex((entry) => entry.scannedId === newScannedId);
-          console.log(rfidData)
+          // console.log(rfidData)
 
           if (existingEntryIndex !== -1) {
             // If the scannedId exists, remove the existing entry
-            dispatchRfidData({ type: 'REMOVE', payload: newScannedId });
+            dispatchRfidData({ type: 'CHANGE', payload: { scannedId: newScannedId, timestamp: formattedTime } });
           }
-          else {
-            // Add the new entry to the array
-            dispatchRfidData({ type: 'ADD', payload: { scannedId: newScannedId, timestamp: formattedTime } });
-          }
+          // Add the new entry to the array
+          dispatchRfidData({ type: 'ADD', payload: { scannedId: newScannedId, timestamp: formattedTime } });
           console.log(rfidData)
         }
       }
@@ -135,7 +151,7 @@ const LandingPage = () => {
 
 
   return (
-    <HStack>
+    <HStack justifyContent={"center"}>
       <VStack spacing={4} maxW={"max-content"} w={"80vw"} justifyContent={"center"} alignItems={"center"} align="stretch" p={4}>
         <Heading as="h1" size="xl" mb={4}>
           {title ? title : "All Sensors"}
@@ -171,10 +187,10 @@ const LandingPage = () => {
           module_id == 3 && <SensorTablePredictive data={predictiveAnalytics} />
         }
         {
-          module_id == 4 && <RfidTable data={rfidData} />
+          module_id == 4 && <RfidTable data={getUniqueById(rfidData)} justifyContent={"center"} />
         }
         {
-          module_id == 1 && <ModFleet />
+          module_id == 1 && <Mod_Fleet />
         }
       </VStack>
     </HStack>

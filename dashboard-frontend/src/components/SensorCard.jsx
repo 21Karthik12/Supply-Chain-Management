@@ -17,12 +17,9 @@ import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-const Card = ({ sensorId, sensorType, moduleName, moduleId, isAlert, isActive }) => {
-
+const Card = ({ sensorId, sensorType, moduleName, moduleId, isAlert, isActive, alertTime }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(sensorId)
-
     // POST request
     const data = {
       command: 'toggle'
@@ -126,11 +123,23 @@ const Card = ({ sensorId, sensorType, moduleName, moduleId, isAlert, isActive })
       <Box borderBottom="1px" borderColor="gray.200"></Box>
 
       {/* View Button */}
-      <Flex justify="center" p="4">
-        <Button as={Link} to={`/sensor/${sensorId}`} colorScheme="blue" size="xs">
-          View
-        </Button>
-      </Flex>
+      {alertTime && alertTime.length > 0 && moduleName === 'Predictive' ? (
+        <Flex justify="space-between" p="4">
+          <Button as={Link} to={`/sensor/${sensorId}`} colorScheme="blue" size="xs">
+            View
+          </Button>
+          {moduleName === 'Predictive' && alertTime && alertTime.length > 0 && (
+            <Text fontSize="sm">
+              Alt time: {alertTime[0].nextAlert * 5}
+            </Text>
+          )}
+        </Flex>) : (
+        <Flex justify="center" p="4">
+          <Button as={Link} to={`/sensor/${sensorId}`} colorScheme="blue" size="xs">
+            View
+          </Button>
+        </Flex>)
+      }
     </Box>
   );
 };

@@ -16,7 +16,7 @@ const Mod_Fleet = () => {
     socket.on('json', (incomingData) => {
         if (incomingData.sensorType == "GPS") {
             coordinates = incomingData.value.split("|")
-            let temp = apiKey + "&origin=" + coordinates[0] + "," + coordinates[1] + "&destination=" + dest[0] + "," + dest[1]
+            let temp = apiKey + "&origin=" + coordinates[0] + "," + coordinates[1] + "&destination=" + dest[0] + "," + dest[1] + "&maptype=satellite"
             setReqUrl(temp)
             //console.log(reqUrl)
         }
@@ -25,8 +25,8 @@ const Mod_Fleet = () => {
     return (
         <>
             <iframe
-                width="450"
-                height="250"
+                width="550"
+                height="450"
                 referrerPolicy="no-referrer-when-downgrade"
                 src={reqUrl}
             >

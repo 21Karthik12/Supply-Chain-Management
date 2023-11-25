@@ -79,7 +79,7 @@ def handle_json_message(data):
     print('JSON Message:', data)
     server.emit('json_response', {
                 'response': 'Received your JSON message'}, namespace='/mote')
-    # client.emit('json_message', data, namespace='/router')
+    client.emit('json_message', data, namespace='/router')
     # Perform other operations as needed
 
 
@@ -135,6 +135,7 @@ def handle_control_node():
 @app.route('/getSensors', methods=['GET'])
 def handle_get_sensors():
     global router
+    # filtered_sensors = [value for value in router.sensors.values() if value is not None]
     return jsonify(list(router.sensors.values()))
 
 
@@ -154,6 +155,8 @@ def handle_analytics():
     for sensor_id in router.sensors.keys():
         data = collection.find({"sensorId": sensor_id})
         data_points = [int(point['alert']) for point in data]
+        if data_points == []:
+            data_points = [0]
         pred_output = predictive_model.predict(
             np.array(data_points).reshape(-1, 1))
         next_alert = int(np.mean(pred_output))
@@ -174,6 +177,8 @@ def handle_forecasting(sensorId):
     print('Fetched data:', data_points)
     data_points.reverse()
     y = data_points
+    if y == []:
+        y = [1.0]
     X = np.array((range(1, len(y) + 1))).reshape(-1, 1)
     forecasting_model.fit(X, y)
     X_test = np.array(list(range(len(y) + 1, len(y) + 11))).reshape(-1, 1)
@@ -200,13 +205,13 @@ def on_disconnect():
 
 def train_predictive_model():
     global predictive_model
-    X = np.array([[2], [3], [4], [1], [5], [2], [3], [6], [2], [1],
-                  [4], [2], [3], [1], [5], [2], [4], [1], [3], [2],
-                  [1], [4], [2], [5], [1], [3], [2], [4], [1], [6]])
-
-    y = np.array([[3], [2], [1], [5], [1], [2], [4], [1], [3], [2],
-                  [1], [4], [2], [5], [1], [3], [2], [4], [1], [6],
-                  [2], [3], [4], [1], [5], [2], [3], [6], [2], [1]])
+    
+    X = []
+    y = []
+    
+    for _ in range(30):
+        X.append([np.random.randint(1, 10)])
+        y.append([np.random.randint(1, 10)])
 
     X = np.array(X).reshape(-1, 1, 1)
     y = np.array(y).reshape(-1, 1)
@@ -226,7 +231,7 @@ if __name__ == '__main__':
     module = sys.argv[1]
     id, port = module_details[module]
     router = Router(id, module, port)
-    router.sensors[2] = None
+    # router.sensors[2] = None
 
     if module == 'Predictive':
         train_predictive_model()

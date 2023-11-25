@@ -56,6 +56,7 @@ const LandingPage = () => {
           url += '/' + module_id
         const response = await fetch(url);
         let data = await response.json();
+        data = data.filter(value => value != null)
         data = data.sort((a, b) => a.sensorId - b.sensorId)
         setSensorData(data);
         setLoading(false);
@@ -76,6 +77,7 @@ const LandingPage = () => {
           let url = `${import.meta.env.VITE_BASE_URL}:5000/analytics`
           const response = await fetch(url);
           let data = await response.json();
+          data = data.filter(value => value != null)
           data = data.sort((a, b) => a.sensorId - b.sensorId)
           setPredictiveAnalytics(data);
           setLoading(false);

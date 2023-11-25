@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import flask_socketio
 from flask_cors import CORS
 import requests
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -65,11 +66,13 @@ def handle_create_node():
 
 @app.route('/rfid', methods=['GET'])
 def handle_rfid():
-    param1 = request.args.get('card_uid')
-    param2 = request.args.get('device_token')
-    print(param1)
-    print(param2)
-    return jsonify({'message': "works"}), 200
+    uid = request.args.get('card_uid')
+    response = {
+        'scannerId':uid,
+        'timestamp': str(datetime.now())
+    }
+    server.emit('rfid', response)
+    return jsonify(response), 200
 
 
 @app.route('/controlSensor/<sensorId>', methods=["POST"])

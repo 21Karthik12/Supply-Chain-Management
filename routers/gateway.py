@@ -72,7 +72,7 @@ def handle_rfid():
         'moduleId': 4,
         'timestamp': str(datetime.now())
     }
-    server.emit('json', response)
+    server.emit('json', response, namespace='/')
     return jsonify(response), 200
 
 

@@ -9,27 +9,35 @@ import axios from 'axios'
 import './SensorInfoPage.css'
 import { useNavigate } from 'react-router-dom'
 import ForecastTable from './components/ForecastTable';
+import Mod_Fleet from './pages/Mod_Fleet';
 
 function SensorInfoPage() {
   const [count, setCount] = useState(0);
   const [matchingSensor, setMatchingSensor] = useState(null);
+  const [state, setState] = useState(false)
+  const [module, setModule] = useState("")
+  const [type, setType] = useState("")
+  const [active, setActive] = useState(false)
+
   const id = useParams().sensorId;
-  let modul = '';
-  let type = '';
-  let active = '';
-  /////
+
   const [sensorData, setSensorData] = useState([]);
   useEffect(() => {
     fetchSensorData();
-  }, []);
+    console.log(state)
+  }, [state]);
+
   let navigate = useNavigate();
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_BASE_URL}:5000/getSensors`)
       .then(response => {
         const matchingSensor = response.data.find(item => item.sensorId === Number(id));
         if (matchingSensor) {
-          ({ module: modul, sensorType: type, active: active } = matchingSensor);
-          setMatchingSensor(matchingSensor);
+            setModule(matchingSensor.module)
+            setActive(matchingSensor.active)
+            setType(matchingSensor.sensorType)
+            setMatchingSensor(matchingSensor);
+            console.log(matchingSensor)
         } else {
           setMatchingSensor(null);
         }
@@ -38,17 +46,16 @@ function SensorInfoPage() {
       .catch(error => {
         console.error('Error fetching data:', error);
       });
-  }, [id]); 
+  }, [id, state]); 
   
-  if (matchingSensor) {
-    ({ module: modul, sensorType: type, active: active } = matchingSensor);
-  }
-
+//   if (matchingSensor) {
+//     ({ module: module, sensorType: type, active: active } = matchingSensor);
+//   }
   const fetchSensorData = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URL}:5000/getSensors`);
+      console.log(response.data)
       setSensorData(response.data);
-      ({active: active } = response.data.active);
     } catch (error) {
       console.error('Error fetching sensor data:', error);
     }
@@ -59,6 +66,7 @@ function SensorInfoPage() {
       const payload = { command: 'resolve' };
       console.log('Resolve Payload:', payload);
       await axios.post(`${import.meta.env.VITE_BASE_URL}:5000/controlSensor/${sensorId}`, { command: 'resolve' });
+      setState(!state)
       fetchSensorData();
     } catch (error) {
       console.error(`Error resolving sensor ${sensorId}:`, error);
@@ -79,9 +87,11 @@ function SensorInfoPage() {
     try {
       await axios.post(`${import.meta.env.VITE_BASE_URL}:5000/controlSensor/${sensorId}`, { command: 'toggle' });
       fetchSensorData();
+      setState(!state)
     } catch (error) {
-      console.error(`Error toggling sensor ${sensorId}:`, error);
+        console.error(`Error toggling sensor ${sensorId}:`, error);
     }
+    setState(!state)
   };
 
   ////
@@ -97,9 +107,9 @@ function SensorInfoPage() {
                         <div className="item bold">SENSOR ID:</div>
                         <div className="item">{id}</div>
                         <div className="item bold">MODULE:</div>
-                        <div className="item">{modul}</div>
+                        <div className="item">{module}</div>
                         <div className="item bold">STATUS:</div>
-                        {active ? (
+                        {state ? (
                         <div className="item">Running</div>
                         ) : (
                         <div className="item">Stopped</div>
@@ -113,11 +123,15 @@ function SensorInfoPage() {
             </div>
           </div>
         </div>
+        {
+         module == 'Fleet'?(<Mod_Fleet id={id} active={active}/>):( 
         <div className="box">
           <Analytics id={id} type={type} />
         </div>
+        )
+        }
         {
-          modul == 'Forecasting' && <ForecastTable data={type} sensorId={id} />
+          module == 'Forecasting' && <ForecastTable data={type} sensorId={id} />
         }
       </div>
     </div>

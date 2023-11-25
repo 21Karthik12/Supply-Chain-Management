@@ -14,6 +14,9 @@ function SensorInfoPage() {
   const [count, setCount] = useState(0);
   const [matchingSensor, setMatchingSensor] = useState(null);
   const id = useParams().sensorId;
+  let modul = '';
+  let type = '';
+  let active = '';
   /////
   const [sensorData, setSensorData] = useState([]);
   useEffect(() => {
@@ -25,6 +28,7 @@ function SensorInfoPage() {
       .then(response => {
         const matchingSensor = response.data.find(item => item.sensorId === Number(id));
         if (matchingSensor) {
+          ({ module: modul, sensorType: type, active: active } = matchingSensor);
           setMatchingSensor(matchingSensor);
         } else {
           setMatchingSensor(null);
@@ -36,17 +40,15 @@ function SensorInfoPage() {
       });
   }, [id]); 
   
-  let modul = '';
-  let type = '';
-  
   if (matchingSensor) {
-    ({ module: modul, sensorType: type } = matchingSensor);
+    ({ module: modul, sensorType: type, active: active } = matchingSensor);
   }
 
   const fetchSensorData = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URL}:5000/getSensors`);
       setSensorData(response.data);
+      ({active: active } = response.data.active);
     } catch (error) {
       console.error('Error fetching sensor data:', error);
     }
@@ -97,7 +99,11 @@ function SensorInfoPage() {
                         <div className="item bold">MODULE:</div>
                         <div className="item">{modul}</div>
                         <div className="item bold">STATUS:</div>
+                        {active ? (
                         <div className="item">Running</div>
+                        ) : (
+                        <div className="item">Stopped</div>
+                        )}
                     </div>
 
                     <div className="buttons" style={{'marginTop':'3rem'}}>

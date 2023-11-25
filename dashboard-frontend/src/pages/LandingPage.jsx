@@ -102,6 +102,7 @@ const LandingPage = () => {
     });
 
     socket.on('json', (incomingData) => {
+      console.log(incomingData)
       if (incomingData && shouldFetchRfidData) {
         if (incomingData.moduleId == 4) {
           let newScannedId = incomingData.scannedId;

@@ -9,6 +9,8 @@ import AddSensor from './pages/AddSensor';
 import OldLandingPage from './pages/OldLandingPage';
 import SensorInfoPage from './SensorInfoPage'
 import Mod_Storage from './pages/Mod_Storage';
+import VerifyData from './pages/VerifyData';
+
 function App() {
   const [count, setCount] = useState(0);
 
@@ -23,6 +25,8 @@ function App() {
             <Route exact path='/:page' element={<LandingPage />}></Route>
             <Route path="/sensor/:sensorId" element={<SensorInfoPage />} />
             <Route path="/addSensor" element={<AddSensor />} />
+            <Route path="/verifyData" element={<VerifyData />} />
+
           </Routes>
         </main>
       </HStack>

@@ -9,7 +9,9 @@ import numpy as np
 from datetime import datetime, timedelta
 from keras.models import Sequential
 from keras.layers import Dense, LSTM
+from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
 
 
 class Router:
@@ -56,7 +58,7 @@ predictive_model.add(LSTM(10, input_shape=(1, 1)))
 predictive_model.add(Dense(1))
 predictive_model.compile(optimizer='adam', loss='mean_squared_error')
 
-forecasting_model = LinearRegression()
+forecasting_model = make_pipeline(PolynomialFeatures(4), LinearRegression())
 
 
 @app.route('/')

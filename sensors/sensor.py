@@ -52,20 +52,9 @@ class Sensor:
             if value[-1] == '7':
                 self.alert = True
         elif self.type == 'GPS':
-            self.try_alert()
-            lower = self.value_range[0]
-            upper = self.value_range[1]
-            critical = self.value_range[2]
-            if self.alert:
-                range = critical - upper
-                lat_value = round(upper + random.random() * range, ndigits=1)
-                long_value = round(upper + random.random() * range, ndigits=1)
-                value = str(lat_value) + '|' + str(long_value)
-            else:
-                range = upper - lower
-                lat_value = round(lower + random.random() * range, ndigits=1)
-                long_value = round(lower + random.random() * range, ndigits=1)
-                value = str(lat_value) + '|' + str(long_value)
+            lat_value = round(-90 + random.random() * 180, ndigits=4)
+            long_value = round(-180 + random.random() * 360, ndigits=4)
+            value = str(lat_value) + '|' + str(long_value)
         else:
             self.try_alert()
             lower = self.value_range[0]
@@ -157,7 +146,7 @@ if __name__ == '__main__':
             client.emit('json_message', data,
                         namespace='/mote')
         if sensor.type == 'GPS':
-            time.sleep(30)
+            time.sleep(20)
         else:
             time.sleep(5)
 
